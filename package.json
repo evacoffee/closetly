@@ -1,0 +1,30 @@
+{
+  "name": "fit",
+  "version": "1.0.0",
+  "description": "A web-based digital wardrobe application that helps users catalog their clothing collection, generate outfit combinations, and connect with other fashion enthusiasts.",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@auth/mongodb-adapter": "^3.9.1",
+    "@types/node": "^22.15.18",
+    "@types/react": "^19.1.4",
+    "@types/react-dom": "^19.1.5",
+    "autoprefixer": "^10.4.21",
+    "cloudinary": "^2.6.1",
+    "mongoose": "^8.14.3",
+    "next": "^15.3.2",
+    "next-auth": "^4.24.11",
+    "postcss": "^8.5.3",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "tailwindcss": "^4.1.7",
+    "typescript": "^5.8.3"
+  }
+}

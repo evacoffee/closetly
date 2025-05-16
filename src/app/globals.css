@@ -1,0 +1,76 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-primary: #9E7148;
+  --color-secondary: #794022;
+  --color-background: #D6C4A8;
+  --color-text: #F1E7DC;
+  --color-accent: #492310;
+  --color-neutral: #EFEFEF;
+}
+
+/* Enable smooth scrolling and touch handling */
+html {
+  -webkit-tap-highlight-color: transparent;
+  scroll-behavior: smooth;
+  touch-action: manipulation;
+}
+
+@layer base {
+  body {
+    @apply antialiased min-h-screen text-accent overscroll-none;
+    background-color: var(--color-background);
+    background-image: var(--background-pattern, theme('backgroundImage.coffee-pattern'));
+  }
+  
+  /* Responsive typography */
+  h1 {
+    @apply font-satisfy text-3xl sm:text-4xl md:text-5xl text-secondary mb-4 tracking-wide;
+  }
+  h2 {
+    @apply font-amatic text-2xl sm:text-3xl md:text-4xl text-primary mb-3 tracking-wider;
+  }
+  p {
+    @apply leading-relaxed font-amatic text-base sm:text-lg tracking-wide;
+  }
+
+  /* Safe area insets for mobile devices */
+  .pb-safe-area-inset-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  
+  .pt-safe-area-inset-top {
+    padding-top: env(safe-area-inset-top);
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-primary text-text px-6 py-3 rounded-full hover:bg-opacity-90 transition-all duration-300 
+           font-satisfy text-xl tracking-wide shadow-cozy hover:shadow-cozy-hover transform hover:scale-105;
+  }
+  .btn-secondary {
+    @apply bg-secondary text-text px-6 py-3 rounded-full hover:bg-opacity-90 transition-all duration-300 
+           font-satisfy text-xl tracking-wide shadow-cozy hover:shadow-cozy-hover transform hover:scale-105;
+  }
+  .card {
+    @apply bg-text/95 backdrop-blur rounded-xl shadow-cozy p-6 transition-all duration-300;
+  }
+  .grid-layout {
+    @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 p-6;
+  }
+  .container-padding {
+    @apply px-6 py-8;
+  }
+  .hover-transform {
+    @apply transition-all duration-300 hover:-translate-y-1;
+  }
+  .section-title {
+    @apply font-satisfy text-3xl text-secondary text-center mb-8 tracking-wide;
+  }
+  .coffee-card {
+    @apply bg-text/95 backdrop-blur-sm rounded-xl shadow-cozy p-6 hover:shadow-cozy-hover transition-all duration-300;
+  }
+}
