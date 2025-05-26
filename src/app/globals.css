@@ -73,4 +73,82 @@ html {
   .coffee-card {
     @apply bg-text/95 backdrop-blur-sm rounded-xl shadow-cozy p-6 hover:shadow-cozy-hover transition-all duration-300;
   }
+  /* Cozy Card */
+  .cozy-card {
+    position: relative;
+    overflow: hidden;
+    border-radius: 0.75rem;
+    border: 1px solid rgba(133, 94, 66, 0.1);
+    background-color: rgba(214, 196, 168, 0.8);
+    padding: 1.5rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    transition: all 300ms;
+    backdrop-filter: blur(8px);
+  }
+
+  .cozy-card:hover {
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  }
+
+  .cozy-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    opacity: 0.05;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23855E42' fill-opacity='0.05' fill-rule='evenodd'%3E%3Ccircle cx='3' cy='3' r='3'/%3E%3Ccircle cx='13' cy='13' r='3'/%3E%3C/g%3E%3C/svg%3E");
+  }
+
+  /* Typography */
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-satisfy text-primary;
+  }
+
+  p {
+    @apply font-crimson text-lg leading-relaxed;
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar {
+    @apply w-2;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-background/50;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-primary/30 rounded-full transition-colors;
+    &:hover {
+      @apply bg-primary/50;
+    }
+  }
+}
+
+/* Animations */
+@keyframes kittenBounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+@keyframes tailWag {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(10deg); }
+}
+
+@keyframes blink {
+  0%, 90%, 100% { transform: scaleY(1); }
+  95% { transform: scaleY(0.1); }
+}
+
+.animate-blink {
+  animation: blink 4s infinite;
+}
+
+.animate-tailWag {
+  animation: tailWag 2s ease-in-out infinite;
+}
+
+.animate-kittenBounce {
+  animation: kittenBounce 2s ease-in-out infinite;
 }
