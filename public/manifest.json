@@ -1,7 +1,7 @@
 {
   "name": "FIT - Digital Wardrobe",
   "short_name": "FIT",
-  "description": "Catalog your clothing, generate outfits, and connect with fashion enthusiasts",
+  "description": "Catalog your clothing, generate outfits, and connect with others",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#D6C4A8",
