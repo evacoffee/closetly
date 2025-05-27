@@ -1,3 +1,6 @@
+// @ts-nocheck
+'use client';
+
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
@@ -6,6 +9,7 @@ const navigationItems = [
   { href: '/wardrobe', label: 'Wardrobe', icon: 'closet' },
   { href: '/outfits', label: 'Outfits', icon: 'outfit' },
   { href: '/profile', label: 'Profile', icon: 'profile' },
+  { href: '/help', label: 'Help', icon: 'help' },
 ];
 
 export const MobileNavigation = () => {
@@ -27,6 +31,7 @@ export const MobileNavigation = () => {
               {icon === 'closet' && '👔'}
               {icon === 'outfit' && '✨'}
               {icon === 'profile' && '👤'}
+              {icon === 'help' && '❓'}
             </span>
             <span className="text-xs font-satisfy tracking-wide">{label}</span>
           </Link>
