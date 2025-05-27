@@ -13,9 +13,6 @@
   "license": "ISC",
   "dependencies": {
     "@auth/mongodb-adapter": "^3.9.1",
-    "@types/node": "^22.15.18",
-    "@types/react": "^19.1.4",
-    "@types/react-dom": "^19.1.5",
     "autoprefixer": "^10.4.21",
     "cloudinary": "^2.6.1",
     "mongoose": "^8.14.3",
@@ -28,6 +25,9 @@
     "typescript": "^5.8.3"
   },
   "devDependencies": {
+    "@types/node": "^22.15.21",
+    "@types/react": "^19.1.5",
+    "@types/react-dom": "^19.1.5",
     "postcss-nesting": "^13.0.1"
   }
 }
