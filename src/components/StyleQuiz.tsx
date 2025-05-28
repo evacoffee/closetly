@@ -1,89 +1,59 @@
-import { useState } from 'react';
-import { StyleCard } from './StyleCard';
-import { fashionStyles, StyleDefinition } from '@/config/styles';
-import { AgeProfile } from './AgeProfileSelector';
+'use client';
 
-interface StyleQuizProps {
-  onComplete: (selectedStyles: StyleDefinition[], ageProfile: AgeProfile) => void;
-  maxSelections?: number;
-  ageProfile?: AgeProfile;
-}
+import React from 'react';
+import { useRouter } from 'next/navigation'; // Correct import for Next.js 13+ App Router
+import { StyleDefinition } from '@/config/styles';
+import { AgeProfile } from '@/components/AgeProfileSelector';
+import { StyleQuiz as StyleQuizComponent } from './StyleQuizComponent';
 
-export const StyleQuiz = ({ onComplete, maxSelections = 5, ageProfile }: StyleQuizProps) => {
-  const [selectedStyles, setSelectedStyles] = useState<string[]>([]);
+export default function StyleQuizPage() {
+  const router = useRouter();
+  const [ageProfile, setAgeProfile] = React.useState<AgeProfile | null>(null);
+  const [selectedStyles, setSelectedStyles] = React.useState<StyleDefinition[]>([]);
 
-  const handleStyleSelect = (styleId: string) => {
-    setSelectedStyles((prev) => {
-      if (prev.includes(styleId)) {
-        return prev.filter((id) => id !== styleId);
-      }
-      if (prev.length >= maxSelections) {
-        return prev;
-      }
-      return [...prev, styleId];
-    });
-  };
-
-  const handleSubmit = () => {
-    const selectedStyleObjects = fashionStyles.filter((style) =>
-      selectedStyles.includes(style.id)
-    );
-    
-    if (!ageProfile) {
-      console.error('Age profile is required to complete style quiz');
-      return;
+  React.useEffect(() => {
+    // Load age profile from localStorage or context if available
+    const savedProfile = localStorage.getItem('ageProfile');
+    if (savedProfile) {
+      setAgeProfile(JSON.parse(savedProfile));
     }
+  }, []);
 
-    // Combine user's selected styles with age profile style preferences
-    onComplete(selectedStyleObjects, ageProfile);
+  const handleQuizComplete = async (selectedStyles: StyleDefinition[], ageProfile: AgeProfile, bodyPhoto?: string) => {
+    try {
+      // Save selected styles and body photo to user profile
+      const profileData = {
+        styles: selectedStyles.map(style => style.id),
+        ageProfile,
+        bodyPhoto,
+        updatedAt: new Date().toISOString()
+      };
+
+      // Here you would typically save to your backend
+      console.log('Saving profile data:', profileData);
+      
+      // For now, save to localStorage
+      localStorage.setItem('userProfile', JSON.stringify(profileData));
+      
+      router.push('/wardrobe'); // Redirect to wardrobe page after completion
+    } catch (error) {
+      console.error('Error saving style preferences:', error);
+    }
   };
 
   return (
-    <div className="max-w-7xl mx-auto container-padding">
-      <div className="text-center max-w-2xl mx-auto mb-12">
-        <h1 className="font-satisfy">Discover Your Personal Style</h1>
-        <p className="text-lg font-amatic mb-6">
-          Choose up to {maxSelections} styles that resonate with your fashion sense
-        </p>
-        <div className="inline-block px-6 py-2 bg-accent/10 rounded-full">
-          <span className="font-satisfy text-xl">
-            {selectedStyles.length} of {maxSelections} styles selected
-          </span>
-        </div>
+    <div className="min-h-screen">
+      <div className="fixed top-0 left-0 right-0 h-2 bg-neutral">
+        <div 
+          className="h-full bg-primary transition-all duration-300 ease-out"
+          style={{ width: `${(selectedStyles.length / 5) * 100}%` }}
+        />
       </div>
-
-      <div className="grid-layout">
-        {fashionStyles.map((style) => (
-          <StyleCard
-            key={style.id}
-            style={style}
-            selected={selectedStyles.includes(style.id)}
-            onSelect={handleStyleSelect}
-          />
-        ))}
-      </div>
-
-      <div className="flex justify-center mt-12">
-        <button
-          className={`btn-primary text-2xl px-8 py-3 ${
-            selectedStyles.length === 0 
-              ? 'opacity-50 cursor-not-allowed' 
-              : 'transform hover:scale-105'
-          }`}
-          onClick={handleSubmit}
-          disabled={selectedStyles.length === 0}
-        >
-          Complete Style Quiz
-        </button>
-      </div>
-      
-      {selectedStyles.length === maxSelections && (
-        <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2">
-          <div className="bg-accent text-text px-6 py-3 rounded-full shadow-lg animate-bounce">
-            <p className="font-amatic text-xl">Maximum styles selected!</p>
-          </div>
-        </div>
-      )}
+      <StyleQuizComponent 
+        onComplete={handleQuizComplete} 
+        maxSelections={5} 
+        ageProfile={ageProfile || undefined} 
+      />
     </div>
   );
-};
+}
