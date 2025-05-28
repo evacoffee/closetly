@@ -1,0 +1,11 @@
+.next
+node_modules
+public
+.git
+.github
+.vscode
+*.md
+*.mdx
+*.log
+.env*
+!.env.production

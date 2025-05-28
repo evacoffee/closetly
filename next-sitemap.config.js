@@ -14,4 +14,9 @@ module.exports = {
   exclude: ['/server-sitemap.xml', '/admin/*', '/api/*'],
   generateIndexSitemap: true,
   outDir: 'public',
+  changefreq: 'daily',
+  priority: 0.7,
+  sitemapSize: 5000,
+  autoLastmod: true,
+  sourceDir: '.next',
 };

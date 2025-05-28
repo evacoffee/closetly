@@ -1,87 +1,84 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { securityMiddleware } from './middlewares/securityMiddleware';
+import { getToken } from 'next-auth/jwt';
 
-// Extend the NextRequest interface to include the ip property
-declare module 'next/server' {
-  interface NextRequest {
-    ip?: string;
-  }
-}
+const PUBLIC_FILE = /\.(.*)$/;
 
-/**
- * Main middleware function that applies security headers and checks
- * to all routes except static files and API routes
- */
 export async function middleware(request: NextRequest) {
-  try {
-    // Skip middleware for static files and API routes
-    const pathname = request.nextUrl.pathname;
-    
-    // Skip middleware for static files and API routes
-    if (
-      pathname.startsWith('/_next/') || // Next.js internal files
-      pathname.startsWith('/api/') ||    // API routes
-      pathname.startsWith('/static/') || // Static files
-      pathname.match(/\.(ico|svg|png|jpg|jpeg|css|js|json)$/) // Common static file extensions
-    ) {
-      return NextResponse.next();
-    }
+  const { pathname } = request.nextUrl;
 
-    // Apply security middleware
-    const securityResponse = await securityMiddleware(request);
-    
-    // If security middleware returned a response (e.g., rate limit exceeded, CSRF failed)
-    if (securityResponse.status >= 400) {
-      return securityResponse;
-    }
-    
-    // Get the response from the next handler
-    const response = NextResponse.next();
-    
-    // Merge security headers with the response
-    securityResponse.headers.forEach((value, key) => {
-      if (key.toLowerCase() !== 'content-length') {
-        response.headers.set(key, value);
-      }
-    });
-    
-    // Add security headers that should be on all responses
-    response.headers.set('X-Content-Type-Options', 'nosniff');
-    response.headers.set('X-Frame-Options', 'DENY');
-    response.headers.set('X-XSS-Protection', '1; mode=block');
-    response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
-    response.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
-    response.headers.set('Strict-Transport-Security', 'max-age=63072000; includeSubDomains; preload');
-    
-    return response;
-  } catch (error) {
-    console.error('Middleware error:', error);
-    return new NextResponse(
-      JSON.stringify({ 
-        error: 'Internal server error',
-        code: 'INTERNAL_SERVER_ERROR'
-      }),
-      { 
-        status: 500, 
-        headers: { 
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*',
-        } 
-      }
-    );
+  // Skip middleware for static files, API routes, and _next
+  if (
+    pathname.startsWith('/_next') ||
+    pathname.startsWith('/api') ||
+    pathname.startsWith('/static') ||
+    PUBLIC_FILE.test(pathname)
+  ) {
+    return NextResponse.next();
   }
+
+  // Check for authentication
+  const session = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET });
+  
+  // Redirect unauthenticated users from protected routes
+  if (pathname.startsWith('/dashboard') && !session) {
+    const url = new URL('/auth/signin', request.url);
+    url.searchParams.set('callbackUrl', request.url);
+    return NextResponse.redirect(url);
+  }
+
+  // Add security headers
+  const nonce = Buffer.from(crypto.randomUUID()).toString('base64');
+  const cspHeader = `
+    default-src 'self';
+    script-src 'self' 'unsafe-eval' 'unsafe-inline' ${
+      process.env.NODE_ENV === 'production' ? '' : `'unsafe-eval'`
+    };
+    style-src 'self' 'unsafe-inline';
+    img-src 'self' blob: data:;
+    font-src 'self';
+    connect-src 'self' ${process.env.NEXT_PUBLIC_API_URL || ''};
+    frame-ancestors 'none';
+    form-action 'self';
+    base-uri 'self';
+  `;
+
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set('x-nonce', nonce);
+  requestHeaders.set(
+    'Content-Security-Policy',
+    cspHeader.replace(/\s{2,}/g, ' ').trim()
+  );
+
+  const response = NextResponse.next({
+    request: {
+      headers: requestHeaders,
+    },
+  });
+
+  // Security headers
+  response.headers.set('X-Frame-Options', 'DENY');
+  response.headers.set('X-Content-Type-Options', 'nosniff');
+  response.headers.set('X-XSS-Protection', '1; mode=block');
+  response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
+  response.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
+  response.headers.set('X-DNS-Prefetch-Control', 'on');
+  response.headers.set('Strict-Transport-Security', 'max-age=63072000; includeSubDomains; preload');
+
+  return response;
 }
 
 export const config = {
   matcher: [
     /*
      * Match all request paths except for the ones starting with:
+     * - api (API routes)
      * - _next/static (static files)
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
-     * - api/ (API routes)
+     * - sitemap.xml (sitemap)
+     * - robots.txt (robots file)
      */
-    '/((?!_next/static|_next/image|favicon.ico|api/).*)',
+    '/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)',
   ],
 };

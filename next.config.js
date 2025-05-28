@@ -1,4 +1,8 @@
 /** @type {import('next').NextConfig} */
+const withBundleAnalyzer = require('@next/bundle-analyzer')({
+  enabled: process.env.ANALYZE === 'true',
+});
+
 const securityHeaders = [
   {
     key: 'X-DNS-Prefetch-Control',
@@ -26,64 +30,34 @@ const securityHeaders = [
   },
   {
     key: 'Permissions-Policy',
-    value: 'camera=(), microphone=(), geolocation=(), interest-cohort=()',
-  },
-  {
-    key: 'Content-Security-Policy',
-    value: [
-      "default-src 'self'",
-      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com",
-      "style-src 'self' 'unsafe-inline'",
-      "img-src 'self' data: https: http:",
-      "font-src 'self' data:",
-      "connect-src 'self' https://www.google-analytics.com",
-      "frame-ancestors 'none'",
-      "form-action 'self'",
-      "base-uri 'self'",
-      "object-src 'none'",
-    ].join('; '),
+    value: 'camera=(), microphone=(), geolocation=()',
   },
 ];
 
-const nextConfig = {
-  async headers() {
-    return [
-      {
-        source: '/:path*',
-        headers: securityHeaders,
-      },
-    ];
-  },
-  poweredByHeader: false,
+module.exports = withBundleAnalyzer({
   reactStrictMode: true,
   productionBrowserSourceMaps: false,
   swcMinify: true,
   compress: true,
   images: {
-    domains: [
-      'res.cloudinary.com',
-      'lh3.googleusercontent.com',
-      'avatars.githubusercontent.com',
-    ],
+    domains: ['res.cloudinary.com', 'lh3.googleusercontent.com'],
     formats: ['image/avif', 'image/webp'],
-    minimumCacheTTL: 60 * 60 * 24 * 30, // 30 days
-    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
-    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
   },
-  experimental: {
-    optimizeCss: true,
-    scrollRestoration: true,
-    optimizePackageImports: [
-      'react-icons',
-      'date-fns',
-      'lodash',
-    ],
+  async headers() {
+    return [
+      {
+        source: '/(.*)',
+        headers: securityHeaders,
+      },
+    ];
   },
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
-  typescript: {
-    ignoreBuildErrors: false,
+  async rewrites() {
+    return [
+      {
+        source: '/sitemap.xml',
+        destination: '/api/sitemap',
+      },
+    ];
   },
   webpack: (config, { isServer }) => {
     if (!isServer) {
@@ -94,6 +68,4 @@ const nextConfig = {
     }
     return config;
   },
-};
-
-module.exports = nextConfig;
+});
