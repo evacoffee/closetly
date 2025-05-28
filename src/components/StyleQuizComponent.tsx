@@ -1,37 +1,49 @@
-import * as React from 'react';
+'use client';
+
+import React, { useCallback, useRef, useState, KeyboardEvent } from 'react';
 import { StyleCard } from './StyleCard';
 import { fashionStyles, StyleDefinition } from '@/config/styles';
 import { AgeProfile } from './AgeProfileSelector';
 
-// Define the StyleCardProps interface to match the StyleCard component's expected props
 interface StyleCardProps {
   style: StyleDefinition;
   selected: boolean;
   onSelect: (styleId: string) => void;
-}
-
-declare global {
-  interface Window {
-    React: typeof React;
-  }
+  disabled?: boolean;
 }
 
 interface StyleQuizProps {
   onComplete: (selectedStyles: StyleDefinition[], ageProfile: AgeProfile, bodyPhoto?: string) => void;
   maxSelections?: number;
   ageProfile?: AgeProfile;
+  disabled?: boolean;
 }
 
-export const StyleQuiz = ({ onComplete, maxSelections = 5, ageProfile }: StyleQuizProps) => {
-  const [selectedStyles, setSelectedStyles] = React.useState<string[]>([]);
-  const [bodyPhoto, setBodyPhoto] = React.useState<string | null>(null);
-  const [isDragOver, setIsDragOver] = React.useState(false);
-  const fileInputRef = React.useRef<HTMLInputElement>(null);
+const StyleQuiz = ({ 
+  onComplete, 
+  maxSelections = 5, 
+  ageProfile,
+  disabled = false
+}: StyleQuizProps) => {
+  const [selectedStyles, setSelectedStyles] = useState<string[]>([]);
+  const [bodyPhoto, setBodyPhoto] = useState<string | null>(null);
+  const [isDragOver, setIsDragOver] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const fileDropRef = useRef<HTMLDivElement>(null);
+
+  // Filter styles based on search query
+  const filteredStyles = fashionStyles.filter(style =>
+    style.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    style.description.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   const handleStyleSelect = (styleId: string) => {
-    setSelectedStyles((prev: string[]) => {
+    if (disabled) return;
+    
+    setSelectedStyles(prev => {
       if (prev.includes(styleId)) {
-        return prev.filter((id: string) => id !== styleId);
+        return prev.filter(id => id !== styleId);
       }
       if (prev.length >= maxSelections) {
         return prev;
@@ -40,16 +52,27 @@ export const StyleQuiz = ({ onComplete, maxSelections = 5, ageProfile }: StyleQu
     });
   };
 
-  const handlePhotoUpload = (file: File) => {
+  const handleKeyDown = (e: KeyboardEvent, styleId: string) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      handleStyleSelect(styleId);
+    }
+  };
+
+  const handlePhotoUpload = useCallback((file: File) => {
     const reader = new FileReader();
     reader.onloadend = () => {
       setBodyPhoto(reader.result as string);
     };
+    reader.onerror = () => {
+      console.error('Error reading file');
+    };
     reader.readAsDataURL(file);
-  };
+  }, []);
 
   const handleRemovePhoto = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
+    e.stopPropagation();
     setBodyPhoto(null);
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
@@ -58,6 +81,7 @@ export const StyleQuiz = ({ onComplete, maxSelections = 5, ageProfile }: StyleQu
 
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
+    e.stopPropagation();
     setIsDragOver(true);
   };
 
@@ -67,7 +91,9 @@ export const StyleQuiz = ({ onComplete, maxSelections = 5, ageProfile }: StyleQu
 
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
+    e.stopPropagation();
     setIsDragOver(false);
+    
     const file = e.dataTransfer.files?.[0];
     if (file && file.type.startsWith('image/')) {
       handlePhotoUpload(file);
@@ -82,29 +108,53 @@ export const StyleQuiz = ({ onComplete, maxSelections = 5, ageProfile }: StyleQu
   };
 
   const triggerFileInput = () => {
+    if (disabled) return;
     fileInputRef.current?.click();
   };
 
   const handleSubmit = () => {
-    const selectedStyleObjects = fashionStyles.filter((style) =>
+    if (disabled || !ageProfile) return;
+    
+    const selectedStyleObjects = fashionStyles.filter(style =>
       selectedStyles.includes(style.id)
     );
     
-    if (!ageProfile) {
-      console.error('Age profile is required to complete style quiz');
-      return;
-    }
-
     onComplete(selectedStyleObjects, ageProfile, bodyPhoto || undefined);
   };
 
+  // Track keyboard navigation for accessibility
+  const handleKeyDownSearch = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Escape') {
+      (e.target as HTMLInputElement).blur();
+    }
+  };
+
   return (
-    <div className="max-w-7xl mx-auto container-padding">
+    <div className="max-w-7xl mx-auto container-padding" ref={fileDropRef}>
       <div className="text-center max-w-2xl mx-auto mb-12">
-        <h1 className="font-satisfy">Discover Your Personal Style</h1>
+        <h1 className="font-satisfy text-4xl mb-4">Discover Your Personal Style</h1>
         <p className="text-lg font-amatic mb-6">
           Choose up to {maxSelections} styles that resonate with your fashion sense
         </p>
+        
+        <div className="mb-8">
+          <div className="relative max-w-md mx-auto">
+            <input
+              type="text"
+              placeholder="Search styles..."
+              className="input input-bordered w-full pl-10"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyDown={handleKeyDownSearch}
+              disabled={disabled}
+              aria-label="Search styles"
+            />
+            <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
+              🔍
+            </span>
+          </div>
+        </div>
+
         <div className="inline-block px-6 py-2 bg-accent/10 rounded-full mb-8">
           <span className="font-satisfy text-xl">
             {selectedStyles.length} of {maxSelections} styles selected
@@ -121,11 +171,16 @@ export const StyleQuiz = ({ onComplete, maxSelections = 5, ageProfile }: StyleQu
           <div 
             className={`border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors ${
               isDragOver ? 'border-accent bg-accent/10' : 'border-gray-300 hover:border-accent'
-            }`}
+            } ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
             onClick={triggerFileInput}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && triggerFileInput()}
+            aria-label="Upload body photo"
+            aria-disabled={disabled}
           >
             <input
               type="file"
@@ -134,6 +189,8 @@ export const StyleQuiz = ({ onComplete, maxSelections = 5, ageProfile }: StyleQu
               accept="image/*"
               className="hidden"
               capture="environment"
+              disabled={disabled}
+              aria-hidden="true"
             />
             
             {bodyPhoto ? (
@@ -143,12 +200,15 @@ export const StyleQuiz = ({ onComplete, maxSelections = 5, ageProfile }: StyleQu
                   alt="Your body photo" 
                   className="mx-auto max-h-64 rounded-lg object-cover"
                 />
-                <button
-                  className="mt-4 text-accent hover:text-accent-dark"
-                  onClick={handleRemovePhoto}
-                >
-                  Change Photo
-                </button>
+                {!disabled && (
+                  <button
+                    className="mt-4 text-accent hover:text-accent-dark focus:outline-none focus:ring-2 focus:ring-accent rounded"
+                    onClick={handleRemovePhoto}
+                    aria-label="Remove photo"
+                  >
+                    Change Photo
+                  </button>
+                )}
               </div>
             ) : (
               <div className="space-y-4">
@@ -163,39 +223,56 @@ export const StyleQuiz = ({ onComplete, maxSelections = 5, ageProfile }: StyleQu
         </div>
       </div>
 
-      <div className="grid-layout">
-        {fashionStyles.map((style) => (
-          <div key={style.id}>
-            <StyleCard
-              style={style}
-              selected={selectedStyles.includes(style.id)}
-              onSelect={handleStyleSelect}
-            />
+      <div className="grid-layout" role="list" aria-label="Style options">
+        {filteredStyles.length > 0 ? (
+          filteredStyles.map((style) => (
+            <div 
+              key={style.id} 
+              role="listitem"
+              className={`transition-opacity ${disabled ? 'opacity-70' : 'hover:opacity-90'}`}
+            >
+              <StyleCard
+                style={style}
+                selected={selectedStyles.includes(style.id)}
+                onSelect={handleStyleSelect}
+                disabled={disabled}
+              />
+            </div>
+          ))
+        ) : (
+          <div className="col-span-full text-center py-12">
+            <p className="text-lg">No styles found matching "{searchQuery}"</p>
           </div>
-        ))}
+        )}
       </div>
 
       <div className="flex justify-center mt-12">
         <button
-          className={`btn-primary text-2xl px-8 py-3 ${
-            selectedStyles.length === 0 
+          className={`btn btn-primary text-2xl px-8 py-3 transition-all ${
+            selectedStyles.length === 0 || disabled
               ? 'opacity-50 cursor-not-allowed' 
-              : 'transform hover:scale-105'
+              : 'hover:scale-105 focus:ring-2 focus:ring-offset-2 focus:ring-primary'
           }`}
           onClick={handleSubmit}
-          disabled={selectedStyles.length === 0}
+          disabled={selectedStyles.length === 0 || disabled}
+          aria-busy={disabled}
+          aria-live="polite"
         >
-          Complete Style Quiz
+          {disabled ? 'Processing...' : 'Complete Style Quiz'}
         </button>
       </div>
       
       {selectedStyles.length === maxSelections && (
-        <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2">
-          <div className="bg-accent text-text px-6 py-3 rounded-full shadow-lg animate-bounce">
-            <p className="font-amatic text-xl">Maximum styles selected!</p>
-          </div>
+        <div 
+          className="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-accent text-white px-6 py-3 rounded-full shadow-lg animate-bounce"
+          role="alert"
+          aria-live="polite"
+        >
+          <p className="font-amatic text-xl">Maximum styles selected!</p>
         </div>
       )}
     </div>
   );
 };
+
+export { StyleQuiz };

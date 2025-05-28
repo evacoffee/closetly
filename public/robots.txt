@@ -1,0 +1,17 @@
+# Allow all robots to crawl the website
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://yourdomain.com/sitemap.xml
+
+# Disallow admin and API routes
+Disallow: /admin/
+Disallow: /api/
+
+# Disallow Next.js internal paths
+Disallow: /_next/
+Disallow: /_api/
+Disallow: /_error
+Disallow: /404
+Disallow: /500

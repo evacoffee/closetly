@@ -1,4 +1,5 @@
 /** @type {import('next').NextConfig} */
+
 const securityHeaders = [
   {
     key: 'X-DNS-Prefetch-Control',
@@ -27,21 +28,6 @@ const securityHeaders = [
   {
     key: 'Permissions-Policy',
     value: 'camera=(), microphone=(), geolocation=(), interest-cohort=()',
-  },
-  {
-    key: 'Content-Security-Policy',
-    value: [
-      "default-src 'self'",
-      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com",
-      "style-src 'self' 'unsafe-inline'",
-      "img-src 'self' data: https: http:",
-      "font-src 'self' data:",
-      "connect-src 'self' https://www.google-analytics.com",
-      "frame-ancestors 'none'",
-      "form-action 'self'",
-      "base-uri 'self'",
-      "object-src 'none'",
-    ].join('; '),
   },
 ];
 
@@ -94,6 +80,16 @@ const nextConfig = {
     }
     return config;
   },
+  env: {
+    NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000',
+    NODE_ENV: process.env.NODE_ENV || 'development',
+  },
+  publicRuntimeConfig: {
+    // Add public runtime config here
+  },
+  serverRuntimeConfig: {
+    // Add server runtime config here
+  },
 };
 
-module.exports = nextConfig;
+export default nextConfig;
