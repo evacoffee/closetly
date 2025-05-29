@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
-import { OutfitGeneratorParams } from '@/utils/outfitGenerator';
+import { OutfitGenerator } from '@/utils/outfitGenerator';
+import { OutfitGeneratorParams } from '@/types/outfitGenerator';
 import { Clothing } from '@/models/Clothing';
 import { Outfit } from '@/models/Outfit';
 import { connectToDatabase } from '@/lib/mongodb';

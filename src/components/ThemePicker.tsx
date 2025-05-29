@@ -1,13 +1,15 @@
+'use client';
+
+import React from 'react';
 import { useTheme } from '@/contexts/ThemeContext';
 import { Theme, isCustomTheme } from '@/config/themes';
-import { useState, useRef } from 'react';
 import { installThemeFromFile } from '@/utils/themeUtils';
 
-export const ThemePicker = () => {
+export const ThemePicker: React.FC = () => {
   const { currentTheme, installedThemes, setTheme, removeTheme, installTheme } = useTheme();
-  const [isOpen, setIsOpen] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isOpen, setIsOpen] = React.useState(false);
+  const [error, setError] = React.useState<string | null>(null);
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
 
   const handleThemeSelect = (theme: Theme) => {
     setTheme(theme);

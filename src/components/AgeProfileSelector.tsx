@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React from 'react';
 
 interface AgeProfileSelectorProps {
   onSelect: (profile: AgeProfile) => void;
@@ -72,8 +72,8 @@ const AGE_PROFILES: AgeProfile[] = [
 ];
 
 export const AgeProfileSelector = ({ onSelect }: AgeProfileSelectorProps) => {
-  const [selectedAge, setSelectedAge] = useState<number | null>(null);
-  const [customizing, setCustomizing] = useState(false);
+  const [selectedAge, setSelectedAge] = React.useState<number | null>(null);
+  const [customizing, setCustomizing] = React.useState(false);
 
   const handleAgeSelect = (age: number) => {
     setSelectedAge(age);

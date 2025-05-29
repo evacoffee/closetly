@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { User } from '@/models/User';
+import User from '@/models/User';
 import { Outfit } from '@/models/Outfit';
 import { connectToDatabase } from '@/lib/mongodb';
 import { Types } from 'mongoose';
@@ -106,7 +106,7 @@ export async function POST(request: Request) {
 
       case 'unfollow':
         user.social.following = user.social.following.filter(
-          id => id !== targetId
+          (id: Types.ObjectId | string) => id.toString() !== targetId.toString()
         );
         await user.save();
 
@@ -130,7 +130,7 @@ export async function POST(request: Request) {
 
       case 'unfavorite-outfit':
         user.social.favoriteOutfits = user.social.favoriteOutfits.filter(
-          id => id !== targetId
+          (id: Types.ObjectId | string) => id.toString() !== targetId.toString()
         );
         await user.save();
 

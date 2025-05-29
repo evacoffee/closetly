@@ -3,6 +3,13 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
   enabled: process.env.ANALYZE === 'true',
 });
 
+const withPWA = require('next-pwa')({
+  dest: 'public',
+  disable: process.env.NODE_ENV === 'development',
+  register: true,
+  skipWaiting: true,
+});
+
 const securityHeaders = [
   {
     key: 'X-DNS-Prefetch-Control',
@@ -34,7 +41,7 @@ const securityHeaders = [
   },
 ];
 
-module.exports = withBundleAnalyzer({
+const nextConfig = {
   reactStrictMode: true,
   productionBrowserSourceMaps: false,
   swcMinify: true,
@@ -68,4 +75,6 @@ module.exports = withBundleAnalyzer({
     }
     return config;
   },
-});
+};
+
+module.exports = withPWA(withBundleAnalyzer(nextConfig));

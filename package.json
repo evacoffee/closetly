@@ -16,19 +16,27 @@
     "analyze": "ANALYZE=true next build"
   },
   "dependencies": {
+    "class-variance-authority": "^0.7.0",
+    "date-fns": "^3.3.1",
+    "framer-motion": "^10.16.4",
+    "lucide-react": "^0.303.0",
+    "mongodb": "^5.7.0",
+    "mongoose": "^8.15.1",
     "next": "14.1.0",
+    "next-auth": "^4.24.5",
+    "next-pwa": "^5.6.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "next-auth": "^4.24.5",
-    "mongodb": "^5.7.0",
-    "zod": "^3.22.4",
-    "framer-motion": "^10.16.4",
-    "class-variance-authority": "^0.7.0",
+    "react-error-boundary": "^6.0.0",
     "tailwind-merge": "^2.2.1",
-    "lucide-react": "^0.303.0",
-    "date-fns": "^3.3.1"
+    "zod": "^3.22.4"
   },
   "devDependencies": {
+    "@next/bundle-analyzer": "^15.3.2",
+    "@testing-library/jest-dom": "^6.1.5",
+    "@testing-library/react": "^14.1.2",
+    "@testing-library/user-event": "^14.5.1",
+    "@types/jest": "^29.5.11",
     "@types/node": "20.11.16",
     "@types/react": "18.2.43",
     "@types/react-dom": "18.2.17",
@@ -45,11 +53,7 @@
     "prettier": "^3.1.1",
     "prettier-plugin-tailwindcss": "^0.5.7",
     "tailwindcss": "^3.4.0",
-    "typescript": "5.3.3",
-    "@types/jest": "^29.5.11",
-    "@testing-library/jest-dom": "^6.1.5",
-    "@testing-library/react": "^14.1.2",
-    "@testing-library/user-event": "^14.5.1"
+    "typescript": "5.3.3"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx,json,md,mdx}": "prettier --write",
