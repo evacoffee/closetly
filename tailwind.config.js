@@ -8,12 +8,22 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        primary: '#855E42', // Warm brown
-        secondary: '#4B3832', // Deep coffee
-        background: '#D6C4A8', // Soft latte
-        text: '#F1E7DC', // Creamy white
-        accent: '#2B2118', // Rich espresso
-        neutral: '#EFEFEF', // Light gray
+        // Brand colors
+        primary: '#855E42',
+        secondary: '#4B3832',
+        background: '#D6C4A8',
+        text: '#2B2118',
+        accent: '#2B2118',
+        neutral: '#EFEFEF',
+        // Extended palette
+        'primary-light': '#A37D5F',
+        'primary-dark': '#6A4B35',
+        'secondary-light': '#6A5247',
+        'secondary-dark': '#332721',
+        'background-light': '#E8DBC7',
+        'background-dark': '#C4B59A',
+        'text-light': '#F1E7DC',
+        'text-dark': '#1A140F',
       },
       fontFamily: {
         satisfy: ['Satisfy', 'cursive'],

@@ -3,6 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "generate:images": "node scripts/generate-asset-images-simple.js",
+    "generate:assets": "npm run generate:images && node scripts/generate-assets.js",
+    "build:mobile": "next build && next export -o build && npm run generate:assets",
+    "cap:sync": "npx cap sync",
+    "cap:open:ios": "npx cap open ios",
+    "cap:open:android": "npx cap open android",
+    "setup:mobile": "npm install -g cordova-res && npm install @capacitor/splash-screen @capacitor/ios @capacitor/android",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
@@ -16,7 +23,11 @@
     "analyze": "ANALYZE=true next build"
   },
   "dependencies": {
+    "@capacitor/android": "^7.2.0",
+    "@capacitor/ios": "^7.2.0",
+    "@capacitor/splash-screen": "^7.0.1",
     "class-variance-authority": "^0.7.0",
+    "cordova-res": "^0.15.4",
     "date-fns": "^3.3.1",
     "framer-motion": "^10.16.4",
     "lucide-react": "^0.303.0",
@@ -32,6 +43,7 @@
     "zod": "^3.22.4"
   },
   "devDependencies": {
+    "@napi-rs/canvas": "^0.1.70",
     "@next/bundle-analyzer": "^15.3.2",
     "@testing-library/jest-dom": "^6.1.5",
     "@testing-library/react": "^14.1.2",
