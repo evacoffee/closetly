@@ -1,6 +1,6 @@
 {
-  "name": "FIT - Digital Wardrobe",
-  "short_name": "FIT",
+  "name": "closetly - digital wardrobe",
+  "short_name": "closetly",
   "description": "Catalog your clothing, generate outfits, and connect with others",
   "start_url": "/",
   "display": "standalone",

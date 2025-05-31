@@ -1,4 +1,4 @@
-# FIT - Digital Wardrobe
+# Closetly - Digital Wardrobe
 
 [![Next.js](https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
@@ -26,8 +26,8 @@ A modern digital wardrobe application that helps users catalog their clothing co
 
 1. Clone the repository
    ```bash
-   git clone https://github.com/yourusername/fit.git
-   cd fit
+   git clone https://github.com/yourusername/closetly.git
+   cd closetly
    ```
 
 2. Install dependencies
