@@ -4,16 +4,17 @@ import { ThemeProvider } from '@/contexts/ThemeContext'
 import { ThemePicker } from '@/components/ThemePicker'
 import { MobileNavigation } from '@/components/MobileNavigation'
 import { KittenLogo } from '@/components/KittenLogo'
+import SearchBar from '@/components/SearchBar'
 
 export const metadata: Metadata = {
-  title: 'FIT - Digital Wardrobe',
+  title: 'Closetly - Digital Wardrobe',
   description: 'Catalog your clothing, generate outfits, and connect with fashion enthusiasts',
   viewport: 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no',
-  applicationName: 'FIT',
+  applicationName: 'Closetly',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
-    title: 'FIT App'
+    title: 'Closetly App'
   },
   formatDetection: {
     telephone: false
@@ -31,7 +32,7 @@ export default function RootLayout({
     <html lang="en" className="antialiased">
       <head>
         <link
-          href="https://fonts.googleapis.com/css2?family=Satisfy&family=Amatic+SC:wght@400;700&family=Crimson+Pro:wght@400;600&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Anton&family=Russo+One&family=Press+Start+2P&display=swap"
           rel="stylesheet"
         />
         <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -41,13 +42,18 @@ export default function RootLayout({
       <body className="bg-background text-text min-h-screen overscroll-none">
         <ThemeProvider>
           <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-sm border-b border-primary/10">
-            <div className="container mx-auto px-4 py-3 flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <KittenLogo className="text-primary" />
-                <h1 className="font-satisfy text-2xl text-primary">FIT</h1>
-              </div>
-              <div className="flex items-center gap-4">
-                <ThemePicker />
+            <div className="container mx-auto px-4 py-3">
+              <div className="flex items-center justify-between w-full gap-2">
+                <div className="flex items-center gap-2 flex-shrink-0">
+                  <KittenLogo className="text-primary" />
+                  <h1 className="font-['Russo_One'] text-2xl text-primary">closetly</h1>
+                </div>
+                <div className="flex-1 max-w-md mx-2">
+                  <SearchBar />
+                </div>
+                <div className="flex items-center gap-4 flex-shrink-0">
+                  <ThemePicker />
+                </div>
               </div>
             </div>
           </header>

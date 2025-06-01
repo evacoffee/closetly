@@ -16,18 +16,80 @@ export const ThemePicker: React.FC = () => {
     setIsOpen(false);
   };
 
+  // Close the menu when clicking outside or pressing Escape
+  React.useEffect(() => {
+    const handleClickOutside = (event: MouseEvent | TouchEvent) => {
+      const target = event.target as HTMLElement;
+      const button = document.querySelector('[aria-label="Change theme"]');
+      
+      if (isOpen && button && !button.contains(target)) {
+        setIsOpen(false);
+      }
+    };
+
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && isOpen) {
+        setIsOpen(false);
+      }
+    };
+
+    // Add both mouse and touch events
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('touchstart', handleClickOutside);
+    document.addEventListener('keydown', handleEscape);
+    
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('touchstart', handleClickOutside);
+      document.removeEventListener('keydown', handleEscape);
+    };
+  }, [isOpen]);
+
+  const toggleMenu = (e: React.MouseEvent | React.TouchEvent) => {
+    e.stopPropagation();
+    e.preventDefault();
+    setIsOpen(!isOpen);
+  };
+
+  // Prevent body scroll when menu is open
+  React.useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isOpen]);
+
   return (
     <div className="relative">
       <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="fixed bottom-4 right-4 z-50 bg-primary text-text p-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
+        onClick={toggleMenu}
+        onTouchStart={(e) => {
+          // Prevent ghost clicks on mobile
+          e.preventDefault();
+          toggleMenu(e);
+        }}
+        className={`fixed bottom-4 right-4 z-50 bg-primary text-text p-3 rounded-full shadow-lg transition-all duration-200 ${
+          isOpen 
+            ? 'scale-95 bg-opacity-90' 
+            : 'hover:shadow-xl hover:-translate-y-1 active:scale-95'
+        } touch-manipulation select-none`}
         aria-label="Change theme"
+        aria-expanded={isOpen}
+        aria-haspopup="dialog"
+        aria-controls="theme-menu"
       >
         <svg
           className="w-6 h-6"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
+          pointerEvents="none"
+          aria-hidden="true"
         >
           <path
             strokeLinecap="round"
@@ -41,10 +103,14 @@ export const ThemePicker: React.FC = () => {
       {isOpen && (
         <div className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm" onClick={() => setIsOpen(false)}>
           <div
-            className="fixed bottom-20 right-4 w-72 bg-text rounded-xl shadow-xl p-4 z-50"
+            id="theme-menu"
+            className="fixed bottom-20 right-4 w-72 bg-white dark:bg-gray-800 rounded-xl shadow-xl p-4 z-50 animate-fade-in-up"
             onClick={e => e.stopPropagation()}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="theme-menu-title"
           >
-            <h3 className="font-satisfy text-xl text-secondary mb-4">Choose Theme</h3>
+            <h3 id="theme-menu-title" className="font-['Anton'] text-xl text-primary dark:text-white mb-4 uppercase tracking-wide">Choose Theme</h3>
             {error && (
               <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-lg text-sm">
                 {error}
