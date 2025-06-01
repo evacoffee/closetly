@@ -3,7 +3,7 @@ import type { Metadata } from 'next'
 import { ThemeProvider } from '@/contexts/ThemeContext'
 import { ThemePicker } from '@/components/ThemePicker'
 import { MobileNavigation } from '@/components/MobileNavigation'
-import { KittenLogo } from '@/components/KittenLogo'
+import { AppIcon } from '@/components/AppIcon'
 import SearchBar from '@/components/SearchBar'
 
 export const metadata: Metadata = {
@@ -45,7 +45,7 @@ export default function RootLayout({
             <div className="container mx-auto px-4 py-3">
               <div className="flex items-center justify-between w-full gap-2">
                 <div className="flex items-center gap-2 flex-shrink-0">
-                  <KittenLogo className="text-primary" />
+                  <AppIcon className="text-primary" />
                   <h1 className="font-['Russo_One'] text-2xl text-primary">closetly</h1>
                 </div>
                 <div className="flex-1 max-w-md mx-2">
