@@ -3,27 +3,44 @@
 @tailwind utilities;
 
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+  --foreground-rgb: 255, 255, 255;
+  --background-start-rgb: 34, 27, 23; /* Deep coffee brown */
+  --background-end-rgb: 51, 41, 35; /* Rich coffee brown */
+  --accent-color: 142, 110, 84; /* Warm coffee beige */
+  --secondary-color: 85, 65, 55; /* Rich espresso */
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
+    --background-start-rgb: 22, 17, 14;
+    --background-end-rgb: 34, 27, 23;
   }
 }
 
 body {
   color: rgb(var(--foreground-rgb));
   background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+    to bottom,
+    rgb(var(--background-start-rgb)),
+    rgb(var(--background-end-rgb))
+  );
+  background-image: radial-gradient(circle at 20% 20%, rgba(142, 110, 84, 0.1) 0%, transparent 50%),
+                    radial-gradient(circle at 80% 80%, rgba(142, 110, 84, 0.1) 0%, transparent 50%);
+  background-size: 100% 100%;
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  
+  .bg-coffee-pattern {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M50 50 Q70 30 80 50 Q70 70 50 50 Q30 70 20 50 Q30 30 50 50' fill='none' stroke='%238E6E54' stroke-width='2'/%3E%3C/svg%3E");
+    background-size: 100px 100px;
+    background-repeat: repeat;
+    opacity: 0.1;
+  }
 }
 
 @layer utilities {

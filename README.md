@@ -12,6 +12,7 @@ A modern digital wardrobe application that helps users catalog their clothing co
 - **Wardrobe Management** - Catalog your clothing items
 - **Outfit Generation** - Get AI-powered outfit suggestions
 - **Social Features** - Share and discover styles
+- **Marketplace** - Buy and sell second-hand fashion items
 - **Responsive Design** - Works on all devices
 
 ## 🚀 Getting Started
@@ -59,6 +60,7 @@ A modern digital wardrobe application that helps users catalog their clothing co
 - [Tailwind CSS](https://tailwindcss.com/) - Styling
 - [MongoDB](https://www.mongodb.com/) - Database
 - [NextAuth.js](https://next-auth.js.org/) - Authentication
+- [Stripe](https://stripe.com/) - Payment Processing
 
 ## 📝 License
 
