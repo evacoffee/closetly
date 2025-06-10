@@ -27,28 +27,44 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  // Add security headers
   const nonce = Buffer.from(crypto.randomUUID()).toString('base64');
-  const cspHeader = `
-    default-src 'self';
-    script-src 'self' 'unsafe-eval' 'unsafe-inline' ${
-      process.env.NODE_ENV === 'production' ? '' : `'unsafe-eval'`
-    };
-    style-src 'self' 'unsafe-inline';
-    img-src 'self' blob: data:;
-    font-src 'self';
-    connect-src 'self' ${process.env.NEXT_PUBLIC_API_URL || ''};
-    frame-ancestors 'none';
-    form-action 'self';
-    base-uri 'self';
-  `;
+  
+  const securityHeaders = {
+    'Content-Security-Policy': [
+      "default-src 'self';",
+      `script-src 'self' 'nonce-${nonce}' 'strict-dynamic' ${
+        process.env.NODE_ENV === 'development' ? "'unsafe-eval'" : ""
+      } https:;`,
+      "style-src 'self' 'unsafe-inline' https:;",
+      "img-src 'self' blob: data: https:;",
+      "font-src 'self' https:;",
+      `connect-src 'self' ${process.env.NEXT_PUBLIC_API_URL || ''} https:;`,
+      "frame-ancestors 'none';",
+      "form-action 'self';",
+      "base-uri 'self';",
+      "object-src 'none';",
+      "block-all-mixed-content;",
+      "upgrade-insecure-requests;"
+    ].join(' '),
+    'X-Content-Type-Options': 'nosniff',
+    'X-Frame-Options': 'DENY',
+    'X-XSS-Protection': '1; mode=block',
+    'Referrer-Policy': 'strict-origin-when-cross-origin',
+    'Permissions-Policy': 'camera=(), microphone=(), geolocation=(), interest-cohort=()',
+    'Strict-Transport-Security': 'max-age=63072000; includeSubDomains; preload',
+    'X-DNS-Prefetch-Control': 'on',
+    'X-Permitted-Cross-Domain-Policies': 'none',
+    'Cross-Origin-Embedder-Policy': 'require-corp',
+    'Cross-Origin-Opener-Policy': 'same-origin',
+    'Cross-Origin-Resource-Policy': 'same-origin',
+  };
 
   const requestHeaders = new Headers(request.headers);
   requestHeaders.set('x-nonce', nonce);
-  requestHeaders.set(
-    'Content-Security-Policy',
-    cspHeader.replace(/\s{2,}/g, ' ').trim()
-  );
+  
+  Object.entries(securityHeaders).forEach(([key, value]) => {
+    requestHeaders.set(key, value);
+  });
 
   const response = NextResponse.next({
     request: {

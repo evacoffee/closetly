@@ -23,19 +23,15 @@
     "analyze": "ANALYZE=true next build"
   },
   "dependencies": {
-    "@capacitor/android": "^7.2.0",
-    "@capacitor/ios": "^7.2.0",
-    "@capacitor/splash-screen": "^7.0.1",
+    "@auth/prisma-adapter": "^1.0.0",
     "@radix-ui/react-dropdown-menu": "^2.1.15",
     "@radix-ui/react-slot": "^1.1.0",
+    "bcryptjs": "^2.4.3",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
-    "cordova-res": "^0.15.4",
     "date-fns": "^3.3.1",
     "framer-motion": "^10.16.4",
     "lucide-react": "^0.513.0",
-    "mongodb": "^5.7.0",
-    "mongoose": "^8.15.1",
     "next": "14.1.0",
     "next-auth": "^4.24.5",
     "next-pwa": "^5.6.0",
@@ -47,13 +43,18 @@
     "tailwindcss-animate": "^1.0.7",
     "zod": "^3.22.4"
   },
+  "prisma": {
+    "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
+  },
   "devDependencies": {
     "@capacitor/cli": "^7.2.0",
     "@napi-rs/canvas": "^0.1.70",
     "@next/bundle-analyzer": "^15.3.2",
+    "@prisma/client": "^6.9.0",
     "@testing-library/jest-dom": "^6.1.5",
     "@testing-library/react": "^14.1.2",
     "@testing-library/user-event": "^14.5.1",
+    "@types/bcryptjs": "^2.4.6",
     "@types/jest": "^29.5.11",
     "@types/node": "^20.19.0",
     "@types/react": "^18.3.23",
@@ -71,8 +72,10 @@
     "postcss": "^8.4.32",
     "prettier": "^3.1.1",
     "prettier-plugin-tailwindcss": "^0.5.7",
+    "prisma": "^5.22.0",
     "tailwindcss": "^3.4.0",
-    "typescript": "5.3.3"
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx,json,md,mdx}": "prettier --write",

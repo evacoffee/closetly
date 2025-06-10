@@ -3,28 +3,45 @@
 @tailwind utilities;
 
 :root {
-  --color-primary: #7C5E48;
-  --color-secondary: #A67C52;
-  --color-background: #F8F5F2;
-  --color-text: #2D2926;
-  --color-accent: #D4A373;
-  --color-neutral: #EFEFEF;
-  --color-success: #4CAF50;
-  --color-warning: #FF9800;
-  --color-error: #F44336;
-  --color-info: #2196F3;
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-  --shadow-inner: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06);
-  --shadow-outline: 0 0 0 3px rgba(164, 144, 124, 0.5);
-  --radius-sm: 0.125rem;
-  --radius-md: 0.375rem;
-  --radius-lg: 0.5rem;
-  --radius-xl: 0.75rem;
-  --radius-2xl: 1rem;
-  --radius-3xl: 1.5rem;
+  /* Coffee Shop Color Palette */
+  --color-espresso: #3E2723;     /* Dark roast coffee */
+  --color-coffee: #6F4E37;       /* Medium coffee */
+  --color-latte: #D7CCC8;        /* Light coffee with milk */
+  --color-cream: #EFEBE9;        /* Light cream */
+  --color-mocha: #8D6E63;        /* Mocha brown */
+  --color-caramel: #A67C52;      /* Caramel accent */
+  
+  /* Semantic Colors */
+  --color-primary: var(--color-coffee);
+  --color-secondary: #5D4037;    /* Dark coffee */
+  --color-background: #3E2723;   /* Dark roast background */
+  --color-surface: #4E342E;      /* Slightly lighter than background */
+  --color-text: #EFEBE9;         /* Light cream text */
+  --color-text-muted: #D7CCC8;   /* Muted text */
+  --color-accent: #D7CCC8;       /* Latte accent */
+  --color-border: #5D4037;       /* Border color */
+  
+  /* Status Colors */
+  --color-success: #81C784;      /* Soft green */
+  --color-warning: #FFD54F;      /* Soft yellow */
+  --color-error: #E57373;        /* Soft red */
+  --color-info: #64B5F6;         /* Soft blue */
+  
+  /* Shadows */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.25);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.35), 0 4px 6px -2px rgba(0, 0, 0, 0.25);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
+  --shadow-inner: inset 0 2px 4px 0 rgba(0, 0, 0, 0.25);
+  --shadow-outline: 0 0 0 3px rgba(124, 94, 72, 0.5);
+  
+  /* Border Radius */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-2xl: 1.5rem;
+  --radius-3xl: 2rem;
   --radius-full: 9999px;
 }
 
@@ -37,16 +54,48 @@ html {
 
 @layer base {
   body {
-    @apply antialiased min-h-screen overscroll-none;
-    background-color: var(--color-background);
-    color: var(--color-text);
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    @apply antialiased min-h-screen overscroll-none bg-background text-text;
+    font-family: 'Montserrat', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    line-height: 1.6;
+    background-image: 
+      radial-gradient(circle at 10% 20%, rgba(62, 39, 35, 0.8) 0%, rgba(62, 39, 35, 1) 90%),
+      url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29-22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23d7ccc8' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
   }
   
-  /* Responsive typography */
+  /* Scrollbar Styling */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: var(--color-surface);
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-coffee);
+    border-radius: 4px;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--color-caramel);
+  }
+  
+  /* Selection Styling */
+  ::selection {
+    background-color: var(--color-caramel);
+    color: var(--color-cream);
+  }
+  
+  /* Typography */
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-playfair font-bold tracking-tight leading-tight;
+    color: var(--color-cream);
+  }
+  
   h1 {
-    @apply text-3xl sm:text-4xl md:text-5xl font-bold mb-4 tracking-tight;
-    color: var(--color-primary);
+    @apply text-4xl sm:text-5xl md:text-6xl mb-6;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
   }
   h2 {
     @apply text-2xl sm:text-3xl font-semibold mb-3 tracking-tight;
@@ -85,8 +134,43 @@ html {
 
 @layer components {
   /* Button styles */
+  .btn {
+    @apply inline-flex items-center justify-center px-6 py-3 rounded-lg font-medium transition-all duration-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-surface focus:ring-caramel disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  
   .btn-primary {
-    @apply inline-flex items-center justify-center px-6 py-3 rounded-lg font-medium text-white bg-primary hover:bg-primary/90 transition-all duration-300 shadow-sm;
+    @apply bg-coffee hover:bg-coffee/90 text-cream shadow-md hover:shadow-lg transform hover:-translate-y-0.5;
+  }
+  
+  .btn-secondary {
+    @apply bg-mocha hover:bg-mocha/90 text-cream shadow-md hover:shadow-lg;
+  }
+  
+  .btn-outline {
+    @apply border border-latte hover:bg-latte/10 text-latte hover:text-cream;
+  }
+  
+  .btn-ghost {
+    @apply hover:bg-latte/10 text-latte hover:text-cream;
+  }
+  
+  /* Card styles */
+  .card {
+    @apply bg-surface/80 backdrop-blur-sm rounded-xl border border-border/50 shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl hover:border-latte/30;
+  }
+  
+  /* Input styles */
+  .input {
+    @apply bg-surface border border-border rounded-lg px-4 py-2 text-cream placeholder-mocha/50 focus:outline-none focus:ring-2 focus:ring-caramel focus:border-transparent transition-colors duration-200;
+  }
+  
+  /* Navigation */
+  .nav-link {
+    @apply text-latte hover:text-cream transition-colors duration-200 px-3 py-2 rounded-md text-sm font-medium;
+  }
+  
+  .nav-link.active {
+    @apply bg-latte/10 text-cream;
   }
   
   .btn-secondary {

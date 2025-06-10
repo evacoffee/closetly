@@ -30,23 +30,14 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="antialiased">
-      <head>
-        <link
-          href="https://fonts.googleapis.com/css2?family=Anton&family=Russo+One&family=Press+Start+2P&display=swap"
-          rel="stylesheet"
-        />
-        <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name="mobile-web-app-capable" content="yes" />
-        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-      </head>
-      <body className="bg-background text-text min-h-screen overscroll-none">
+      <body className="bg-background text-text min-h-screen overscroll-none font-sans">
         <ThemeProvider>
-          <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-sm border-b border-primary/10">
+          <header className="sticky top-0 z-50 bg-surface/80 backdrop-blur-sm border-b border-coffee-800 shadow-sm">
             <div className="container mx-auto px-4 py-3">
-              <div className="flex items-center justify-between w-full gap-2">
-                <div className="flex items-center gap-2 flex-shrink-0">
-                  <AppIcon className="text-primary" />
-                  <h1 className="font-['Russo_One'] text-2xl text-primary">closetly</h1>
+              <div className="flex items-center justify-between w-full gap-4">
+                <div className="flex items-center gap-3 flex-shrink-0">
+                  <AppIcon className="text-caramel" />
+                  <h1 className="font-playfair text-2xl font-bold text-cream">Closetly</h1>
                 </div>
                 <div className="flex-1 max-w-md mx-2">
                   <SearchBar />

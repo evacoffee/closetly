@@ -96,6 +96,54 @@ export const fashionStyles: StyleDefinition[] = [
     name: 'Kawaii',
     description: 'Cute Japanese-inspired fashion with playful colors and adorable motifs.',
     keywords: ['cute', 'playful', 'colorful', 'adorable', 'japanese'],
+  },
+  {
+    id: 'punk',
+    name: 'Punk',
+    description: 'Rebellious and anti-establishment with leather, studs, and DIY elements.',
+    keywords: ['rebellious', 'edgy', 'leather', 'studs', 'DIY'],
+  },
+  {
+    id: 'gothic',
+    name: 'Gothic',
+    description: 'Dark, dramatic style with Victorian and romantic influences.',
+    keywords: ['dark', 'dramatic', 'victorian', 'romantic', 'mysterious'],
+  },
+  {
+    id: 'sporty',
+    name: 'Sporty',
+    description: 'Athletic-inspired clothing that prioritizes comfort and movement.',
+    keywords: ['athletic', 'comfortable', 'active', 'casual', 'sport'],
+  },
+  {
+    id: 'preppy-casual',
+    name: 'Preppy Casual',
+    description: 'Relaxed take on preppy style with comfortable, put-together looks.',
+    keywords: ['casual', 'preppy', 'comfortable', 'polished', 'relaxed'],
+  },
+  {
+    id: 'boho-chic',
+    name: 'Boho Chic',
+    description: 'Elegant bohemian style with a more polished and sophisticated edge.',
+    keywords: ['boho', 'chic', 'elegant', 'polished', 'bohemian'],
+  },
+  {
+    id: 'minimalist-luxe',
+    name: 'Minimalist Luxe',
+    description: 'Minimalism with luxurious fabrics and impeccable tailoring.',
+    keywords: ['minimal', 'luxury', 'tailored', 'sophisticated', 'elegant'],
+  },
+  {
+    id: 'street-goth',
+    name: 'Street Goth',
+    description: 'Urban streetwear meets dark gothic aesthetics.',
+    keywords: ['streetwear', 'goth', 'urban', 'dark', 'edgy'],
+  },
+  {
+    id: 'retro-futurism',
+    name: 'Retro Futurism',
+    description: 'Blend of vintage styles with futuristic elements and metallics.',
+    keywords: ['retro', 'futuristic', 'metallic', 'vintage', 'modern'],
   }
 ];
 
