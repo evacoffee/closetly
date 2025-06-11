@@ -8,6 +8,8 @@
 
 A modern digital wardrobe application that helps users catalog their clothing collection, generate outfit combinations, and connect with fashion enthusiasts.
 
+*small use of AI for checking purposes*
+
 ## ✨ Features
 
 - **Style Quiz** - Discover your personal style
