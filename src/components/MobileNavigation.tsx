@@ -7,8 +7,8 @@ const navigationItems = [
   { href: '/', label: 'Home' },
   { href: '/wardrobe', label: 'Wardrobe' },
   { href: '/outfits', label: 'Outfits' },
+  { href: '/outfits/recommendations', label: 'Get Dressed' },
   { href: '/profile', label: 'Profile' },
-  { href: '/help', label: 'Help' },
 ];
 
 export const MobileNavigation = () => {

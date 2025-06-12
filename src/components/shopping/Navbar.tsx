@@ -37,6 +37,12 @@ export function Navbar() {
             >
               Contact
             </Link>
+            <Link 
+              href="/outfits/recommendations" 
+              className="nav-link bg-amber-900 text-white px-4 py-2 rounded-full hover:bg-amber-700 transition-colors font-medium"
+            >
+              Get Dressed
+            </Link>
             
             <div className="relative group">
               <Link 
