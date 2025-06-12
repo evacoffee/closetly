@@ -50,7 +50,6 @@ export async function rateLimitMiddleware(request: NextRequest) {
   return response;
 }
 
-// Security headers configuration
 export function getSecurityHeaders(nonce: string) {
   return {
     'Content-Security-Policy': [
@@ -83,7 +82,6 @@ export function getSecurityHeaders(nonce: string) {
   };
 }
 
-// Input sanitization
 export function sanitizeInput(input: string): string {
   return input
     .replace(/&/g, '&amp;')
@@ -94,12 +92,10 @@ export function sanitizeInput(input: string): string {
     .replace(/\//g, '&#x2F;');
 }
 
-// CSRF protection
 export function generateCsrfToken(): string {
   return crypto.randomUUID();
 }
 
-// Password validation
 export function validatePassword(password: string): { valid: boolean; message?: string } {
   if (password.length < 12) {
     return { valid: false, message: 'Password must be at least 12 characters long' };

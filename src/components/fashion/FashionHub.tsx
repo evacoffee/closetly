@@ -12,7 +12,6 @@ import {
 } from '@/components/ui/select';
 import { StyleDefinition } from '@/config/styles';
 
-// Local StyleQuiz component implementation
 const StyleQuiz = ({
   onComplete,
   maxSelections
@@ -55,7 +54,6 @@ const StyleQuiz = ({
 
 
 
-// Outfit Inspiration Types & Data
 const OCCASIONS = ['Casual', 'Work', 'Date Night', 'Party', 'Formal'] as const;
 const SEASONS = ['Spring', 'Summer', 'Fall', 'Winter'] as const;
 
@@ -87,27 +85,23 @@ const OUTFITS: Outfit[] = [
       'Tote bag'
     ]
   },
-  // Add more outfits...
 ];
 
 
 
 export function FashionHub() {
-  // Quiz and Outfit State
   const [activeTab, setActiveTab] = React.useState('style-quiz');
   const [selectedStyles, setSelectedStyles] = React.useState<StyleDefinition[]>([]);
   const [selectedOccasion, setSelectedOccasion] = React.useState<string>('Casual');
   const [selectedSeason, setSelectedSeason] = React.useState<string>('Summer');
   const [quizCompleted, setQuizCompleted] = React.useState(false);
   
-  // Handle quiz completion
   const handleQuizComplete = (styles: StyleDefinition[]) => {
     setSelectedStyles(styles);
     setQuizCompleted(true);
     setActiveTab('outfits');
   };
 
-  // Filter outfits based on selected styles and filters
   const filteredOutfits = OUTFITS.filter(outfit => {
     const matchesStyle = selectedStyles.length === 0 || 
       selectedStyles.some(style => outfit.styles.includes(style.id));

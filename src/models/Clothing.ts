@@ -56,7 +56,6 @@ const ClothingSchema = new Schema<IClothing>({
   timestamps: true
 });
 
-// Index for efficient querying
 ClothingSchema.index({ userId: 1, category: 1 });
 ClothingSchema.index({ userId: 1, style: 1 });
 ClothingSchema.index({ userId: 1, color: 1 });

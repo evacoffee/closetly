@@ -7,7 +7,6 @@ export interface WardrobeItem {
     weatherSuitability: string[];
     formality: 'casual' | 'business' | 'formal' | 'athletic';
     layerable: boolean;
-    // Add other relevant fields
   }
   
   export interface OutfitSuggestion {

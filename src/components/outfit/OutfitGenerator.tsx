@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -20,27 +20,16 @@ const OCCASIONS = [
 ];
 
 export function OutfitGenerator() {
-  const [occasion, setOccasion] = useState('');
-  const [weatherEnabled, setWeatherEnabled] = useState(false);
-  const [location, setLocation] = useState('');
+  const [occasion, setOccasion] = React.useState('');
+  const [weatherEnabled, setWeatherEnabled] = React.useState(false);
+  const [location, setLocation] = React.useState('');
   
   const { generateOutfit, suggestion, isLoading, error } = useOutfitGenerator();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    let weatherData = null;
-    if (weatherEnabled && location) {
-      // In a real app, you would fetch weather data from a weather API
-      // This is a simplified example
-      weatherData = {
-        temp: 22,
-        condition: 'Sunny',
-        location: location
-      };
-    }
-    
-    await generateOutfit(occasion, weatherData);
+    const locationToUse = weatherEnabled ? location : undefined;
+    await generateOutfit(occasion, locationToUse);
   };
 
   return (

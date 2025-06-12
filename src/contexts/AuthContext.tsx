@@ -33,7 +33,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     loadSession();
 
-    // Listen for auth state changes
     const unsubscribe = () => {
       window.addEventListener('storage', (event) => {
         if (event.key === 'nextauth.session') {

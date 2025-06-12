@@ -1,14 +1,12 @@
 import { IClothing } from '@/models/Clothing';
 import { IOutfit } from '@/models/Outfit';
 import { Types } from 'mongoose';
-import { ExternalTip, OutfitGeneratorParams, OutfitRules } from '@/types/outfitGenerator';
+import { ExternalTip, OutfitGeneratorParams, OutfitRules } from '@/types/outfit';
 import { hasMongoId } from './typeGuards';
 import { OutfitErrorRegulator } from './errorHandler';
 
-// This class generates outfit combinations from a user's wardrobe
-// while incorporating style tips from social media platforms
 export class OutfitGenerator {
-  private static readonly rules: OutfitRules = {
+  private static rules: OutfitRules = {
     maxItems: 6,
     requiredPositions: ['top', 'bottom', 'shoes'],
     styleCompatibility: {
@@ -16,14 +14,14 @@ export class OutfitGenerator {
       'streetwear': ['edgy', 'athleisure', 'urban'],
       'classic': ['minimalist', 'business-casual', 'preppy'],
       'bohemian': ['artsy', 'vintage', 'romantic'],
-      'athleisure': ['streetwear', 'sporty', 'casual'],
+      'athleisure': ['streetwear', 'sporty', 'casual']
     },
     colorCompatibility: {
       'black': ['white', 'gray', 'navy', 'beige', 'burgundy'],
       'navy': ['white', 'gray', 'beige', 'light-blue', 'burgundy'],
       'white': ['black', 'navy', 'gray', 'beige', 'brown', 'pastels'],
       'beige': ['brown', 'navy', 'black', 'white', 'olive'],
-      'gray': ['black', 'navy', 'white', 'pastels', 'burgundy'],
+      'gray': ['black', 'navy', 'white', 'pastels', 'burgundy']
     },
     seasonalRules: {
       'summer': ['lightweight', 'breathable', 'short-sleeve', 'linen'],
@@ -72,7 +70,6 @@ export class OutfitGenerator {
   ];
 
   private static async fetchExternalTips(params: OutfitGeneratorParams): Promise<ExternalTip[]> {
-    // Filter tips based on user's age and style preferences
     return this.FASHION_TIPS.filter(tip => {
       const isAgeAppropriate = !tip.ageRange || 
         (params.age >= tip.ageRange.min && params.age <= tip.ageRange.max);
@@ -110,7 +107,7 @@ export class OutfitGenerator {
         return outfit;
       }
 
-      // Add essential pieces first
+
       for (const position of this.rules.requiredPositions) {
         const suitable = availableClothes.filter(item => 
           hasMongoId(item) && this.isItemSuitableForPosition(item, position, outfit, clothes, tips)
@@ -145,7 +142,7 @@ export class OutfitGenerator {
         }
       }
 
-      // Check if all required positions are filled
+
       const missingPositions = this.rules.requiredPositions.filter(pos => 
         !outfit.clothes?.some(c => c.position === pos)
       );
@@ -159,7 +156,7 @@ export class OutfitGenerator {
         });
       }
 
-      // Add optional pieces (accessories and layers)
+
       while (
         (outfit.clothes?.length || 0) < this.rules.maxItems && 
         availableClothes.length > 0
@@ -191,7 +188,7 @@ export class OutfitGenerator {
         }
       }
 
-      // Check style coherence
+
       this.validateStyleCoherence(outfit, clothes);
 
       return outfit;
@@ -213,7 +210,7 @@ export class OutfitGenerator {
       allClothes.find(item => hasMongoId(item) && item._id.toString() === c.itemId)
     ).filter((item): item is IClothing => item !== undefined);
 
-    // Check if all items share at least one common style
+
     const commonStyles = outfitItems.reduce((common, item, index) => {
       if (index === 0) return item.style;
       return common.filter(style => item.style.includes(style));
@@ -230,7 +227,7 @@ export class OutfitGenerator {
       });
     }
 
-    // Check color harmony
+
     const colorCombinations = outfitItems.flatMap((item1, i) =>
       outfitItems.slice(i + 1).map(item2 => ({
         color1: item1.color[0],
@@ -288,7 +285,7 @@ export class OutfitGenerator {
       return false;
     }
 
-    // Get existing styles from the outfit
+
     const existingStyles = outfit.clothes?.map(c => {
       const matchingItem = allClothes.find(item => 
         hasMongoId(item) && item._id.toString() === c.itemId
@@ -296,7 +293,7 @@ export class OutfitGenerator {
       return matchingItem?.style || [];
     }).flat() || [];
 
-    // Check style compatibility
+
     if (existingStyles.length > 0) {
       const isStyleCompatible = item.style.some(style =>
         existingStyles.some(existingStyle =>
@@ -307,7 +304,7 @@ export class OutfitGenerator {
       if (!isStyleCompatible) return false;
     }
 
-    // Apply tips based on position and style
+
     const relevantTips = tips.filter(tip =>
       tip.category.toLowerCase().includes(position) &&
       tip.style.some(s => item.style.includes(s))
@@ -340,12 +337,12 @@ export class OutfitGenerator {
   ): number {
     let score = 0;
 
-    // Style match score
+
     if (outfit.style) {
       score += item.style.filter(s => outfit.style?.includes(s)).length * 2;
     }
 
-    // Color harmony score
+
     const existingColors = outfit.clothes?.map(c => {
       const matchingItem = allClothes.find(item => 
         hasMongoId(item) && item._id.toString() === c.itemId
@@ -360,7 +357,7 @@ export class OutfitGenerator {
       )
     ).length;
 
-    // Season match score
+
     if (outfit.season && item.season.some(s => outfit.season?.includes(s))) {
       score += 1;
     }

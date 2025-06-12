@@ -1,4 +1,3 @@
-// XSS Protection
 export const sanitizeInput = (input: string): string => {
   return input
     .replace(/&/g, '&amp;')
@@ -9,18 +8,15 @@ export const sanitizeInput = (input: string): string => {
     .replace(/\//g, '&#x2F;');
 };
 
-// CSRF Protection
 export const generateCSRFToken = (): string => {
   return crypto.randomBytes(32).toString('hex');
 };
 
-// Rate limiting configuration
 export const rateLimitConfig = {
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 100, // limit each IP to 100 requests per windowMs
 };
 
-// Password validation
 export const validatePassword = (password: string): { valid: boolean; message?: string } => {
   if (password.length < 8) {
     return { valid: false, message: 'Password must be at least 8 characters long' };
@@ -40,7 +36,6 @@ export const validatePassword = (password: string): { valid: boolean; message?: 
   return { valid: true };
 };
 
-// Secure cookie settings
 export const secureCookieOptions = {
   httpOnly: true,
   secure: process.env.NODE_ENV === 'production',
@@ -49,7 +44,6 @@ export const secureCookieOptions = {
   path: '/',
 };
 
-// Input validation middleware
 export const validateInput = (input: any, schema: any) => {
   try {
     const result = schema.safeParse(input);

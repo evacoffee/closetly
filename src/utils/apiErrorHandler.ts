@@ -28,7 +28,6 @@ export const withErrorHandling = (
       await handler(req, res);
     } catch (error) {
       if (error instanceof ApiError) {
-        // Log the error
         OutfitErrorRegulator.logError({
           code: error.code,
           message: error.message,
@@ -40,7 +39,6 @@ export const withErrorHandling = (
           },
         });
 
-        // Send error response
         res.status(error.statusCode).json({
           success: false,
           error: {
@@ -53,7 +51,6 @@ export const withErrorHandling = (
           },
         });
       } else {
-        // Handle unexpected errors
         const statusCode = 500;
         const message = 'An unexpected error occurred';
         
@@ -84,14 +81,12 @@ export const withErrorHandling = (
   };
 };
 
-// Helper function to determine error severity based on status code
 function getSeverityFromStatusCode(statusCode: number): 'low' | 'medium' | 'high' {
   if (statusCode >= 500) return 'high';
   if (statusCode >= 400) return 'medium';
   return 'low';
 }
 
-// Utility functions for common error types
 export const notFound = (message: string = 'Resource not found') => {
   return new ApiError(message, 404, 'NOT_FOUND');
 };

@@ -77,13 +77,11 @@ const OutfitTipSchema = new Schema<IOutfitTip>({
   timestamps: true
 });
 
-// Indexes for efficient querying
 OutfitTipSchema.index({ status: 1, 'ageRange.min': 1, 'ageRange.max': 1 });
 OutfitTipSchema.index({ styles: 1, status: 1 });
 OutfitTipSchema.index({ likes: -1, status: 1 });
 OutfitTipSchema.index({ reports: 1 });
 
-// Auto-reject tips with too many reports
 OutfitTipSchema.pre('save', function(next) {
   if (this.reports >= 5 && this.status === 'approved') {
     this.status = 'rejected';

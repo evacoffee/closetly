@@ -4,7 +4,6 @@ import * as React from 'react';
 const { useState, useEffect } = React;
 import Link from 'next/link';
 
-// Mock data for outfits
 interface OutfitItem {
   id: number;
   name: string;
@@ -64,7 +63,6 @@ const initialOutfits: OutfitItem[] = [
   },
 ];
 
-// Available filters
 const seasons = ['All Seasons', 'Spring', 'Summer', 'Fall', 'Winter', 'All'];
 const occasions = ['All Occasions', 'Work', 'Casual', 'Date', 'Party', 'Formal', 'Sport'];
 
@@ -141,11 +139,9 @@ export default function OutfitsPage() {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Load outfits (simulating API call)
   useEffect(() => {
     const loadOutfits = async () => {
       setIsLoading(true);
-      // Simulate API delay
       await new Promise(resolve => setTimeout(resolve, 800));
       setOutfits(initialOutfits);
       setIsLoading(false);
@@ -154,7 +150,6 @@ export default function OutfitsPage() {
     loadOutfits();
   }, []);
 
-  // Filter outfits based on search and filters
   const filteredOutfits = outfits.filter(outfit => {
     const matchesSearch = 
       outfit.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -176,17 +171,6 @@ export default function OutfitsPage() {
 
   return (
     <div className="min-h-screen pb-20">
-      {/* Header */}
-      <div className="bg-gradient-to-b from-primary/10 to-background py-8">
-        <div className="container mx-auto px-4">
-          <h1 className="text-3xl md:text-4xl font-bold mb-4">Your Outfits</h1>
-          <p className="text-neutral-600 max-w-2xl">
-            Browse your outfit combinations or create new ones by mixing and matching items from your wardrobe.
-          </p>
-        </div>
-      </div>
-      
-      {/* Filters */}
       <div className="bg-white border-b border-neutral-200 sticky top-16 z-10">
         <div className="container mx-auto px-4 py-4">
           <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
@@ -235,44 +219,6 @@ export default function OutfitsPage() {
         </div>
       </div>
       
-      {/* Outfits Grid */}
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-xl font-semibold">{filteredOutfits.length} Outfits</h2>
-          <button 
-            onClick={() => setShowCreateModal(true)}
-            className="btn-sm btn-primary"
-          >
-            + Create New Outfit
-          </button>
-        </div>
-        
-        {isLoading ? (
-          <div className="flex justify-center items-center py-20">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {filteredOutfits.map((outfit: OutfitItem) => (
-              <Link href={`/outfits/${outfit.id}`} key={outfit.id} className="block">
-                <OutfitCard 
-                  outfit={outfit} 
-                  onToggleFavorite={handleToggleFavorite} 
-                />
-              </Link>
-            ))}
-            <CreateOutfitCard onClick={() => setShowCreateModal(true)} />
-          </div>
-        )}
-        
-        {!isLoading && filteredOutfits.length === 0 && (
-          <div className="text-center py-12">
-            <p className="text-neutral-500">No outfits match your filters. Try adjusting your search or filters.</p>
-          </div>
-        )}
-      </div>
-      
-      {/* Create Outfit Modal - Placeholder */}
       {showCreateModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-lg shadow-xl max-w-lg w-full p-6">

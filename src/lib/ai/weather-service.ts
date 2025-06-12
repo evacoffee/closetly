@@ -25,7 +25,6 @@ interface WeatherData {
         };
       } catch (error) {
         console.error('Error fetching weather:', error);
-        // Return default weather data if API fails
         return {
           temperature: 20,
           condition: 'Clear',

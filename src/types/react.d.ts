@@ -1,4 +1,3 @@
-// Type definitions for React and JSX
 declare namespace JSX {
   interface IntrinsicElements {
     [elemName: string]: any;
@@ -26,5 +25,4 @@ declare module 'next/link' {
 
 declare module 'next/navigation' {
   export function usePathname(): string;
-  // Add other navigation hooks as needed
 }

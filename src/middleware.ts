@@ -7,7 +7,6 @@ const PUBLIC_FILE = /\.(.*)$/;
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Skip middleware for static files, API routes, and _next
   if (
     pathname.startsWith('/_next') ||
     pathname.startsWith('/api') ||
@@ -17,10 +16,8 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // Check for authentication
   const session = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET });
   
-  // Redirect unauthenticated users from protected routes
   if (pathname.startsWith('/dashboard') && !session) {
     const url = new URL('/auth/signin', request.url);
     url.searchParams.set('callbackUrl', request.url);
@@ -72,7 +69,6 @@ export async function middleware(request: NextRequest) {
     },
   });
 
-  // Security headers
   response.headers.set('X-Frame-Options', 'DENY');
   response.headers.set('X-Content-Type-Options', 'nosniff');
   response.headers.set('X-XSS-Protection', '1; mode=block');
@@ -86,15 +82,6 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - api (API routes)
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     * - sitemap.xml (sitemap)
-     * - robots.txt (robots file)
-     */
     '/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)',
   ],
 };

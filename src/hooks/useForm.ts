@@ -40,7 +40,6 @@ export function useForm<T extends Record<string, any>>(
         [name]: type === 'number' ? parseFloat(value) || 0 : value,
       }));
 
-      // Clear error when user types
       if (errors[name as keyof T]) {
         setErrors((prev) => {
           const newErrors = { ...prev };

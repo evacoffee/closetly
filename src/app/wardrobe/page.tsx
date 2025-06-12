@@ -3,7 +3,6 @@
 import * as React from 'react';
 const { useState } = React;
 
-// Define types for clothing items
 interface ClothingItem {
   id: number;
   name: string;
@@ -14,7 +13,6 @@ interface ClothingItem {
   image?: string;
 }
 
-// Mock data for clothing items
 const initialClothingItems: ClothingItem[] = [
   { id: 1, name: 'Blue Denim Jacket', category: 'Outerwear', color: 'blue', season: 'Spring', favorite: true },
   { id: 2, name: 'White T-Shirt', category: 'Tops', color: 'white', season: 'All', favorite: false },
@@ -26,7 +24,6 @@ const initialClothingItems: ClothingItem[] = [
   { id: 8, name: 'Black Leather Boots', category: 'Footwear', color: 'black', season: 'Fall', favorite: true },
 ];
 
-// Available filters
 const categories = ['All', 'Tops', 'Bottoms', 'Outerwear', 'Dresses', 'Footwear', 'Accessories'];
 const colors = ['All', 'black', 'white', 'blue', 'red', 'gray', 'beige', 'multicolor'];
 const seasons = ['All', 'Spring', 'Summer', 'Fall', 'Winter'];
@@ -80,7 +77,6 @@ export default function WardrobePage() {
     favorite: false 
   });
 
-  // Filter items based on search and filters
   const filterItems = (items: ClothingItem[]) => {
     return items.filter((item: ClothingItem) => {
       const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase());
@@ -111,17 +107,6 @@ export default function WardrobePage() {
 
   return (
     <div className="min-h-screen pb-20">
-      {/* Header */}
-      <div className="bg-gradient-to-b from-primary/10 to-background py-8">
-        <div className="container mx-auto px-4">
-          <h1 className="text-3xl md:text-4xl font-bold mb-4">Your Wardrobe</h1>
-          <p className="text-neutral-600 max-w-2xl">
-            Organize and manage your clothing collection. Add new items, filter by category, and find the perfect piece for any outfit.
-          </p>
-        </div>
-      </div>
-      
-      {/* Filters */}
       <div className="bg-white border-b border-neutral-200 sticky top-16 z-10">
         <div className="container mx-auto px-4 py-4">
           <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
@@ -180,37 +165,6 @@ export default function WardrobePage() {
         </div>
       </div>
       
-      {/* Clothing Items Grid */}
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-xl font-semibold">{filterItems(clothingItems).length} Items</h2>
-          <button 
-            onClick={() => setShowAddModal(true)}
-            className="btn-sm btn-primary"
-          >
-            + Add New Item
-          </button>
-        </div>
-        
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-          {filterItems(clothingItems).map((item: ClothingItem) => (
-            <ClothingItemCard
-              key={item.id}
-              item={item}
-              onToggleFavorite={handleToggleFavorite}
-            />
-          ))}
-          <AddItemCard onClick={() => setShowAddModal(true)} />
-        </div>
-        
-        {filterItems(clothingItems).length === 0 && (
-          <div className="text-center py-12">
-            <p className="text-neutral-500">No items match your filters. Try adjusting your search or filters.</p>
-          </div>
-        )}
-      </div>
-      
-      {/* Add Item Modal */}
       {showAddModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6">

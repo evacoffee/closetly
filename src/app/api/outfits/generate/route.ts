@@ -1,53 +1,61 @@
-import { NextResponse } from 'next/server';
-import { OutfitGenerator } from '@/utils/outfitGenerator';
-import { OutfitGeneratorParams } from '@/types/outfitGenerator';
-import { Clothing } from '@/models/Clothing';
-import { Outfit } from '@/models/Outfit';
-import { connectToDatabase } from '@/lib/mongodb';
+import { NextResponse } from 'next/server'
+import { OutfitGenerator } from '@/utils/outfitGenerator'
+import { OutfitGeneratorParams } from '@/types/outfit'
+import { Clothing } from '@/models/Clothing'
+import { Outfit } from '@/models/Outfit'
+import { connectToDatabase } from '@/lib/mongodb'
 
-export async function POST(request: Request) {
+// Generate a new outfit based on user preferences
+export async function POST(req: Request) {
   try {
-    await connectToDatabase();
-
-    const params: OutfitGeneratorParams = await request.json();
+    // Connect to the database
+    await connectToDatabase()
     
-    // Merge base style preferences with user's preferred styles
-    params.preferredStyles = [
+    // Get the request parameters
+    const params: OutfitGeneratorParams = await req.json()
+    
+    // Combine base styles with any additional preferred styles
+    const styles = [
       ...(params.baseStylePreferences || []),
       ...(params.preferredStyles || [])
-    ];
+    ]
 
-    // Fetch user's clothes that match the age category's style preferences
-    const userClothes = await Clothing.find({ 
+    // Find clothes that match the user's style preferences
+    const clothes = await Clothing.find({ 
       userId: params.userId,
-      style: { $in: params.preferredStyles }
-    });
+      style: { $in: styles }
+    })
 
-    if (userClothes.length === 0) {
+    // Check if we found any matching clothes
+    if (!clothes.length) {
       return NextResponse.json(
-        { error: 'No clothes found in wardrobe' },
+        { error: "Couldn't find any clothes that match your style" },
         { status: 404 }
-      );
+      )
     }
 
-    // Generate outfit
-    const generatedOutfit = await OutfitGenerator.generateOutfit(userClothes, params);
+    // Generate a new outfit using the outfit generator
+    const newOutfit = await OutfitGenerator.generateOutfit(clothes, {
+      ...params,
+      preferredStyles: styles
+    })
 
-    // Save the generated outfit
-    const outfit = new Outfit({
-      ...generatedOutfit,
-      name: 'AI Generated Outfit',
-      description: 'Automatically generated based on your preferences',
-    });
+    // Save the new outfit to the database
+    const savedOutfit = await new Outfit({
+      ...newOutfit,
+      name: params.outfitName || 'New Outfit',
+      description: params.description || 'Created just for you!',
+      createdAt: new Date()
+    }).save()
 
-    await outfit.save();
-
-    return NextResponse.json(outfit);
-  } catch (error) {
-    console.error('Error generating outfit:', error);
+    // Return the newly created outfit
+    return NextResponse.json(savedOutfit)
+    
+  } catch (err) {
+    console.error('Something went wrong generating outfit:', err)
     return NextResponse.json(
-      { error: 'Failed to generate outfit' },
+      { error: 'Had trouble creating your outfit. Please try again.' },
       { status: 500 }
-    );
+    )
   }
 }

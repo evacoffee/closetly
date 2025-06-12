@@ -1,86 +1,92 @@
-import { PrismaAdapter } from '@next-auth/prisma-adapter';
-import { PrismaClient } from '@prisma/client';
-import { AuthOptions } from 'next-auth';
-import CredentialsProvider from 'next-auth/providers/credentials';
-import GoogleProvider from 'next-auth/providers/google';
+import { PrismaAdapter } from '@next-auth/prisma-adapter'
+import { PrismaClient } from '@prisma/client'
+import { AuthOptions } from 'next-auth'
+import CredentialsProvider from 'next-auth/providers/credentials'
+import GoogleProvider from 'next-auth/providers/google'
 
-const prisma = new PrismaClient();
+// Set up db connection
+const prisma = new PrismaClient()
 
 export const authOptions: AuthOptions = {
   adapter: PrismaAdapter(prisma) as any,
   providers: [
+    // Google OAuth setup
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID || '',
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET || '',
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET || ''
     }),
+    // Email/password login
     CredentialsProvider({
-      name: 'Credentials',
+      name: 'Email and Password',
       credentials: {
         email: { label: 'Email', type: 'email' },
-        password: { label: 'Password', type: 'password' },
+        password: { label: 'Password', type: 'password' }
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
-          return null;
+          console.log('Missing email or password')
+          return null
         }
 
         const user = await prisma.user.findUnique({
-          where: { email: credentials.email },
-        });
+          where: { email: credentials.email }
+        })
 
         if (!user) {
-          return null;
+          console.log('No user found with that email')
+          return null
         }
 
-        // In a real app, you should use proper password hashing here
-        // This is just a basic example
-        const isValid = user.password === credentials.password;
+        // TODO: Add proper password hashing in production
+        const isValid = user.password === credentials.password
         if (!isValid) {
-          return null;
+          console.log('Wrong password')
+          return null
         }
 
         return {
           id: user.id,
           email: user.email,
-          name: user.name,
-        };
-      },
-    }),
+          name: user.name
+        }
+      }
+    })
   ],
   session: {
-    strategy: 'jwt',
+    strategy: 'jwt'
   },
   pages: {
     signIn: '/auth/signin',
     signOut: '/auth/signout',
-    error: '/auth/error',
+    error: '/auth/error'
   },
   callbacks: {
     async session({ session, token }) {
       if (token) {
-        session.user.id = token.id as string;
-        session.user.name = token.name as string;
-        session.user.email = token.email as string;
+        session.user.id = token.id as string
+        session.user.name = token.name as string
+        session.user.email = token.email as string
       }
-      return session;
+      return session
     },
     async jwt({ token, user }) {
       if (user) {
-        token.id = user.id;
+        token.id = user.id
       }
-      return token;
-    },
+      return token
+    }
   },
   secret: process.env.NEXTAUTH_SECRET,
-  debug: process.env.NODE_ENV === 'development',
-};
+  debug: process.env.NODE_ENV === 'development'
+}
 
+// Extend the default session type
 declare module 'next-auth' {
   interface Session {
     user: {
-      id: string;
-      name?: string | null;
-      email?: string | null;
-    };
+      id: string
+      name?: string | null
+      email?: string | null
+    }
   }
 }

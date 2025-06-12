@@ -21,7 +21,6 @@ const ErrorOverlay: React.FC = () => {
       });
     };
 
-    // Update stats every 5 seconds
     updateStats();
     const interval = setInterval(updateStats, 5000);
     return () => clearInterval(interval);
@@ -99,7 +98,6 @@ const ErrorOverlay: React.FC = () => {
             <div className="mt-4">
               <button
                 onClick={() => {
-                  // Open error details in a new window
                   window.open('/_error-debug', '_blank');
                 }}
                 className="w-full bg-gray-100 hover:bg-gray-200 text-gray-800 py-2 px-4 rounded text-sm transition-colors"

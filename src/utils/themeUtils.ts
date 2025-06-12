@@ -33,7 +33,6 @@ export const installThemeFromFile = async (file: File): Promise<Theme> => {
       throw new Error('Invalid theme file format');
     }
 
-    // Add installation date for custom themes
     return {
       ...themeData.theme,
       installDate: new Date()

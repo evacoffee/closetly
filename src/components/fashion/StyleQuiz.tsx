@@ -9,7 +9,6 @@ import { StyleDefinition } from '@/config/styles';
 import { StyleQuizWizard } from './StyleQuizWizard';
 import dynamic from 'next/dynamic';
 
-// Lazy load the StyleQuizComponent
 const StyleQuizComponent = dynamic(
   () => import('./StyleQuizComponent').then(mod => mod.StyleQuizComponent),
   { 
@@ -58,7 +57,6 @@ export function StyleQuiz({
     }
   };
 
-  // If quiz is complete, show the results with an option to edit or complete
   if (isQuizComplete) {
     return (
       <Card className="w-full max-w-4xl mx-auto">

@@ -16,7 +16,6 @@ export const ThemePicker: React.FC = () => {
     setIsOpen(false);
   };
 
-  // Close the menu when clicking outside or pressing Escape
   React.useEffect(() => {
     const handleClickOutside = (event: MouseEvent | TouchEvent) => {
       const target = event.target as HTMLElement;
@@ -33,7 +32,6 @@ export const ThemePicker: React.FC = () => {
       }
     };
 
-    // Add both mouse and touch events
     document.addEventListener('mousedown', handleClickOutside);
     document.addEventListener('touchstart', handleClickOutside);
     document.addEventListener('keydown', handleEscape);
@@ -51,7 +49,6 @@ export const ThemePicker: React.FC = () => {
     setIsOpen(!isOpen);
   };
 
-  // Prevent body scroll when menu is open
   React.useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
@@ -69,7 +66,6 @@ export const ThemePicker: React.FC = () => {
       <button
         onClick={toggleMenu}
         onTouchStart={(e) => {
-          // Prevent ghost clicks on mobile
           e.preventDefault();
           toggleMenu(e);
         }}

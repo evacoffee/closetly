@@ -98,11 +98,9 @@ interface ErrorHistoryItem extends OutfitError {
   resolution?: string;
 }
 
-// Global error handler for uncaught exceptions and unhandled rejections
 const setupGlobalErrorHandlers = () => {
   if (typeof window === 'undefined') return; // Skip in Node.js
 
-  // Handle uncaught errors
   window.addEventListener('error', (event) => {
     const error = event.error || event;
     
@@ -120,7 +118,6 @@ const setupGlobalErrorHandlers = () => {
     });
   });
 
-  // Handle unhandled promise rejections
   window.addEventListener('unhandledrejection', (event) => {
     const error = event.reason || 'Unknown promise rejection';
     const message = error instanceof Error ? error.message : String(error);
@@ -137,7 +134,6 @@ const setupGlobalErrorHandlers = () => {
   });
 };
 
-// Initialize global error handlers when this module is imported
 if (typeof window !== 'undefined') {
   setupGlobalErrorHandlers();
 }
@@ -166,22 +162,9 @@ export class OutfitErrorRegulator {
   
   private static circuitBreakers = new Map<string, CircuitBreakerState>();
 
-  // Single implementation of logToService
   private static logToService(error: OutfitError): void {
-    // Implementation for logging to external service
     if (process.env.ERROR_LOGGING_SERVICE_URL) {
       try {
-        // In a real implementation, you would send the error to your logging service
-        // Example:
-        // await fetch(process.env.ERROR_LOGGING_SERVICE_URL, {
-        //   method: 'POST',
-        //   headers: { 'Content-Type': 'application/json' },
-        //   body: JSON.stringify({
-        //     ...error,
-        //     timestamp: error.timestamp.toISOString(),
-        //     environment: process.env.NODE_ENV
-        //   })
-        // });
       } catch (logError) {
         console.error('Failed to log error to service:', logError);
       }
@@ -192,10 +175,8 @@ export class OutfitErrorRegulator {
     try {
       console.log(`Triggering regulation: ${regulation.id} for error: ${error.code}`);
       
-      // Update regulation last triggered time
       regulation.lastTriggered = new Date();
       
-      // Apply regulation action based on type
       switch (regulation.action.type) {
         case 'notify':
           this.handleNotification(regulation, error);
@@ -222,19 +203,16 @@ export class OutfitErrorRegulator {
   }
 
   private static updateMetrics(error: OutfitError): void {
-    // Update error counts
     if (!this.metrics.errorCounts[error.code]) {
       this.metrics.errorCounts[error.code] = 0;
     }
     this.metrics.errorCounts[error.code]++;
     
-    // Update retry queue metrics
     this.metrics.retryQueue = {
       pending: this.retryQueue.length,
       inProgress: this.isProcessingQueue
     };
     
-    // Update circuit breaker metrics
     this.metrics.circuitBreakers = Array.from(this.circuitBreakers.entries()).map(([key, value]) => ({
       key,
       ...value
@@ -271,7 +249,6 @@ export class OutfitErrorRegulator {
   }
   
   private static handleNotification(regulation: OutfitRegulation, error: OutfitError): void {
-    // Implementation for notification handling
     console.log(`Sending notification for regulation: ${regulation.id}`);
   }
 
@@ -300,22 +277,18 @@ export class OutfitErrorRegulator {
   }
 
   private static handleThrottle(regulation: OutfitRegulation, error: OutfitError): void {
-    // Implementation for throttling
     console.log(`Throttling operation due to regulation: ${regulation.id}`);
   }
 
   private static handleFallback(regulation: OutfitRegulation, error: OutfitError): void {
-    // Implementation for fallback behavior
     console.log(`Using fallback for regulation: ${regulation.id}`);
   }
 
   private static handleDisable(regulation: OutfitRegulation, error: OutfitError): void {
-    // Implementation for disabling functionality
     console.log(`Disabling operation due to regulation: ${regulation.id}`);
   }
 
   private static handleAdjust(regulation: OutfitRegulation, error: OutfitError): void {
-    // Implementation for adjusting behavior
     console.log(`Adjusting behavior for regulation: ${regulation.id}`);
   }
 
@@ -355,19 +328,15 @@ export class OutfitErrorRegulator {
       retryCount: error.retryCount || 0
     };
 
-    // Add to error history
     this.ERROR_HISTORY.push(errorWithId);
     if (this.ERROR_HISTORY.length > this.MAX_ERROR_HISTORY) {
       this.ERROR_HISTORY.shift();
     }
 
-    // Check regulations
     this.checkRegulations(errorWithId);
 
-    // Log to external service
     this.logToService(errorWithId);
 
-    // Update metrics
     this.updateMetrics(errorWithId);
 
     return errorId;
@@ -390,14 +359,11 @@ export class OutfitErrorRegulator {
         }
         this.metrics.regulationTriggers[regulation.id]++;
       }
-      // Error code matching logic is already handled above
       
-      // Check error pattern match if provided
       if (condition.errorPattern && !condition.errorPattern.test(error.code)) {
         continue;
       }
       
-      // Check severity match
       if (condition.severity) {
         const severities = Array.isArray(condition.severity)
           ? condition.severity
@@ -406,12 +372,10 @@ export class OutfitErrorRegulator {
         if (!severities.includes(error.severity)) continue;
       }
       
-      // Check source match
       if (condition.source && condition.source !== error.source) {
         continue;
       }
       
-      // Get matching recent errors
       const recentErrors = this.getRecentErrors(
         condition.timeWindow, 
         condition.errorCode ? error.code : undefined,
@@ -419,7 +383,6 @@ export class OutfitErrorRegulator {
         condition.source
       );
       
-      // Check if error threshold is reached
       if (recentErrors.length >= condition.errorCount) {
         this.applyRegulation(regulation, error);
       }
@@ -433,7 +396,6 @@ export class OutfitErrorRegulator {
     return (Date.now() - regulation.lastTriggered.getTime()) < cooldownMs;
   }
 
-  // logToService implementation is now defined above
   
   static markAsResolved(errorId: string, resolution: string = 'Manually resolved'): boolean {
     const error = this.getErrorHistoryItem(errorId);
@@ -460,7 +422,6 @@ export class OutfitErrorRegulator {
   }
   
   private static sendNotification(regulation: OutfitRegulation, error: OutfitError): void {
-    // Implement notification logic (e.g., send email, Slack message)
     const notification = {
       regulationId: regulation.id,
       error: {
@@ -474,7 +435,6 @@ export class OutfitErrorRegulator {
     
     console.warn(`[NOTIFICATION] Regulation triggered: ${regulation.name}`, notification);
     
-    // Example: Send to external notification service
     if (process.env.NOTIFICATION_SERVICE_URL) {
       fetch(process.env.NOTIFICATION_SERVICE_URL, {
         method: 'POST',
@@ -492,10 +452,8 @@ export class OutfitErrorRegulator {
     triggerError: OutfitError
   ): void {
     try {
-      // Update last triggered time
       regulation.lastTriggered = new Date();
       
-      // Log the regulation being applied
       const logContext = {
         regulationId: regulation.id,
         regulationName: regulation.name,
@@ -511,7 +469,6 @@ export class OutfitErrorRegulator {
       
       console.warn(`[REGULATION_TRIGGERED] ${regulation.name}`, logContext);
       
-      // Apply the regulation action
       switch (regulation.action.type) {
         case 'notify':
           this.sendNotification(regulation, triggerError);
@@ -559,9 +516,6 @@ export class OutfitErrorRegulator {
     }
   }
   
-  /**
-   * Returns the current status of the error regulator
-   */
   static getMetrics(): Metrics {
     return {
       ...this.metrics,
@@ -616,9 +570,6 @@ export class OutfitErrorRegulator {
     };
   }
   
-  /**
-   * Get a summary of recent errors for debugging or reporting
-   */
   static getErrorSummary() {
     return {
       totalErrors: this.ERROR_HISTORY.length,

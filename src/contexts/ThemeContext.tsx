@@ -21,7 +21,6 @@ export const useTheme = (): ThemeContextType => {
   return context;
 };
 
-// Explicitly define the ThemeProviderProps interface with proper type for children
 interface ThemeProviderProps {
   children: React.ReactNode;
 }
@@ -32,15 +31,12 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
   const [isLoading, setIsLoading] = React.useState(true);
 
   React.useEffect(() => {
-    // Only run on client-side
     if (typeof window === 'undefined') return;
 
-    // Load saved theme preference from localStorage
     const savedThemeId = localStorage?.getItem('currentThemeId');
     const savedThemes = localStorage?.getItem('installedThemes');
 
     if (savedThemeId) {
-      // Explicitly type the theme parameter in the find callback
       const theme = installedThemes.find((t: Theme) => t.id === savedThemeId);
       if (theme) {
         setCurrentTheme(theme);
@@ -51,18 +47,15 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
     if (savedThemes) {
       try {
         const parsedThemes: Theme[] = JSON.parse(savedThemes);
-        // Filter out any themes that might be duplicates of default themes
         const uniqueThemes = parsedThemes.filter(
           (theme: Theme) => !defaultThemes.some((dt: Theme) => dt.id === theme.id)
         );
         setInstalledThemes([...defaultThemes, ...uniqueThemes]);
       } catch (error) {
         console.error('Error loading saved themes:', error);
-        // Reset to default themes if there's an error parsing saved themes
         setInstalledThemes([...defaultThemes]);
       }
     } else {
-      // Initialize with default themes if no saved themes
       setInstalledThemes([...defaultThemes]);
     }
   }, []);
@@ -91,15 +84,12 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const removeTheme = (themeId: string) => {
-    // Don't allow removing default themes
     if (defaultThemes.some((t: Theme) => t.id === themeId)) return;
 
     const newThemes = installedThemes.filter((t: Theme) => t.id !== themeId);
     setInstalledThemes(newThemes);
-    // Only save non-default themes to localStorage
     localStorage.setItem('installedThemes', JSON.stringify(newThemes.filter((t: Theme) => !defaultThemes.some((dt: Theme) => dt.id === t.id))));
 
-    // If current theme is removed, switch to default
     if (currentTheme.id === themeId) {
       setTheme(defaultThemes[0]);
     }

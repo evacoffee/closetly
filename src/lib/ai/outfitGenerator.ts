@@ -1,15 +1,9 @@
 import { prisma } from '../prisma';
-import { Configuration, OpenAIApi } from 'openai';
-import axios, { AxiosError } from 'axios';
+import OpenAI from 'openai';
 import { OutfitSuggestion, OutfitGeneratorError } from '@/types/outfit';
-
-interface WeatherData {
-  temp: number;
-  condition: string;
-  location: string;
-  humidity?: number;
-  windSpeed?: number;
-}
+import { weatherService } from '../services/weatherService';
+import type { WeatherData } from '../services/weatherService';
+import axios, { type AxiosError } from 'axios';
 
 interface GenerateOptions {
   occasion: string;
@@ -21,15 +15,14 @@ interface GenerateOptions {
 }
 
 export class OutfitGenerator {
-  private openai: OpenAIApi;
+  private openai: OpenAI;
   private weatherApiKey: string | undefined;
 
   constructor() {
     this.weatherApiKey = process.env.WEATHER_API_KEY;
-    const configuration = new Configuration({
+    this.openai = new OpenAI({
       apiKey: process.env.OPENAI_API_KEY,
     });
-    this.openai = new OpenAIApi(configuration);
   }
 
   async getWeatherData(location: string): Promise<WeatherData | null> {
@@ -56,28 +49,28 @@ export class OutfitGenerator {
     }
   }
 
-  async generateOutfitSuggestion(userId: string, occasion: string, weatherData: any = null): Promise<OutfitSuggestion> {
+  async generateOutfitSuggestion(userId: string, occasion: string, location: string = ''): Promise<OutfitSuggestion> {
     try {
-      let weather = weatherData;
+      let weather: WeatherData | null = null;
+      let seasonalRec = 'all';
       
-      // If weather data includes location string, fetch actual weather
-      if (weatherData?.location && typeof weatherData.location === 'string') {
-        weather = await this.getWeatherData(weatherData.location) || weatherData;
+      if (location) {
+        weather = await weatherService.getCurrentWeather(location);
+        if (weather) {
+          seasonalRec = weatherService.getSeasonalRecommendation(weather.temp);
+        }
       }
       
-      // Get user's wardrobe items
       const wardrobeItems = await prisma.wardrobeItem.findMany({
         where: { userId, status: 'IN_WARDROBE' },
         include: { category: true }
       });
 
-      // Get user's style preferences
       const user = await prisma.user.findUnique({
         where: { id: userId },
         include: { styleProfile: true }
       });
 
-      // Validate input
       if (!wardrobeItems.length) {
         const error = new Error('No items found in your wardrobe. Please add some items first.') as OutfitGeneratorError;
         error.code = 'NO_WARDROBE_ITEMS';
@@ -85,10 +78,9 @@ export class OutfitGenerator {
         throw error;
       }
 
-      // Prepare prompt for AI with enhanced context
-      const prompt = this.buildPrompt(wardrobeItems, user?.styleProfile, occasion, weather);
+      const weatherContext = weather ? { ...weather, seasonalRec } : null;
+      const prompt = this.buildPrompt(wardrobeItems, user?.styleProfile, occasion, weatherContext);
       
-      // Add system message with fashion guidelines
       const systemMessage = `You are a professional fashion stylist with expertise in creating stylish outfits. 
       Consider the following when creating outfits:
       - Color coordination and contrast
@@ -100,7 +92,7 @@ export class OutfitGenerator {
       
       Always respond with a valid JSON object in the specified format.`;
 
-      const completion = await this.openai.createChatCompletion({
+      const completion = await this.openai.chat.completions.create({
         model: "gpt-4",
         messages: [
           {
@@ -113,13 +105,16 @@ export class OutfitGenerator {
           }
         ],
         temperature: 0.7,
-        max_tokens: 1000,
+        max_tokens: 500
       });
 
-      const response = completion.data.choices[0]?.message?.content || '';
-      
+      const content = completion.choices[0]?.message?.content;
+      if (!content) {
+        throw new Error('No response from AI');
+      }
+
       try {
-        return this.parseAIResponse(response);
+        return this.parseAIResponse(content);
       } catch (parseError) {
         console.error('Error parsing AI response:', parseError);
         const error = new Error('Failed to process the outfit suggestion') as OutfitGeneratorError;
@@ -147,45 +142,65 @@ export class OutfitGenerator {
     }
   }
 
-  private buildPrompt(wardrobeItems: any[], styleProfile: any, occasion: string, weather: any): string {
+  private buildPrompt(wardrobeItems: any[], styleProfile: any, occasion: string, weather: (Partial<WeatherData> & { seasonalRec?: string }) | null): string {
     let prompt = `Create a stylish and appropriate outfit for a ${occasion} occasion. `;
     
     if (weather) {
-      prompt += `The current weather in ${weather.location} is ${weather.temp}°C, ${weather.condition}. `;
-      if (weather.humidity > 70) prompt += 'High humidity. ';
-      if (weather.windSpeed > 15) prompt += 'It\'s quite windy. ';
-      if (weather.temp < 10) prompt += 'It\'s quite cold, so suggest warmer layers. ';
-      if (weather.temp > 25) prompt += 'It\'s warm, so suggest lighter clothing. ';
+      const condition = weather.condition ? `The current weather is ${weather.condition}` : '';
+      const temp = typeof weather.temp === 'number' ? ` with a temperature of ${weather.temp}°C` : '';
+      prompt += `${condition}${temp}. `;
+      
+      if (weather.humidity && weather.humidity > 70) prompt += 'It\'s quite humid. ';
+      if (weather.windSpeed && weather.windSpeed > 20) prompt += 'It\'s quite windy. ';
+      if (typeof weather.temp === 'number' && weather.temp < 10) prompt += 'It\'s quite cold. ';
+      if (typeof weather.temp === 'number' && weather.temp > 25) prompt += 'It\'s quite hot. ';
     }
 
-    if (styleProfile) {
-      prompt += `The user's style is ${styleProfile.styleType}. `;
-      prompt += `Favorite colors: ${styleProfile.favoriteColors?.join(', ')}. `;
-    }
+    const itemsList = wardrobeItems.map(item => 
+      `- ${item.name} (${item.category?.name || 'Uncategorized'})`
+    ).join('\n');
 
-    prompt += '\n\nAvailable items in wardrobe (format: Name - Category - Color - Notes):\n';
-    wardrobeItems.forEach(item => {
-      prompt += `- ${item.name} - ${item.category?.name || 'Uncategorized'} - ${item.color || 'No color specified'}`;
-      if (item.material) prompt += ` - Material: ${item.material}`;
-      if (item.brand) prompt += ` - Brand: ${item.brand}`;
-      if (item.notes) prompt += ` - Notes: ${item.notes}`;
-      prompt += '\n';
-    });
+    const styleInfo = styleProfile ? `
+Style Preferences:
+- Favorite Colors: ${styleProfile.favoriteColors?.join(', ') || 'Not specified'}
+- Preferred Styles: ${styleProfile.preferredStyles?.join(', ') || 'Not specified'}
+- Avoid: ${styleProfile.avoidStyles?.join(', ') || 'None'}
+` : 'No style profile found. Using general fashion guidelines.';
 
-    prompt += '\n\nPlease suggest a complete outfit using these items. Format your response as a valid JSON object with these fields: ';
-    prompt += 'outfitName (creative name for the outfit), ';
-    prompt += 'items (array of item IDs), ';
-    prompt += 'description (detailed description of the outfit), ';
-    prompt += 'occasion (the occasion this is suitable for), ';
-    prompt += 'stylingTips (3-5 bullet points with styling suggestions), ';
-    prompt += 'alternatives (suggestions for similar items that could work if the suggested items are not available).'
+    const weatherContext = weather ? `
+Weather Conditions:
+- Temperature: ${weather.temp}°C
+- Condition: ${weather.condition}
+${weather.location ? `- Location: ${weather.location}` : ''}
+` : 'No weather information provided.';
 
-    return prompt;
+    return `Create a stylish outfit for the following occasion: ${occasion}
+
+Available Wardrobe Items:
+${itemsList}
+
+${styleInfo}
+${weatherContext}
+
+Please provide a detailed outfit suggestion including:
+1. Outfit name
+2. List of items to wear (from the available wardrobe)
+3. Description of why this outfit works
+4. Styling tips
+5. Alternative items that could work
+
+Format your response as a JSON object with the following structure:
+{
+  "outfitName": "string",
+  "items": ["string"],
+  "description": "string",
+  "stylingTips": ["string"],
+  "alternatives": ["string"]
+}`;
   }
 
   private parseAIResponse(response: string): any {
     try {
-      // Extract JSON from markdown code block if present
       const jsonMatch = response.match(/```(?:json)?\n([\s\S]*?)\n```/);
       const jsonString = jsonMatch ? jsonMatch[1] : response;
       

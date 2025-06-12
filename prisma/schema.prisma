@@ -1,9 +1,5 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
-  previewFeatures = ["fullTextSearch", "fullTextIndex", "filteredRelationCount"]
 }
 
 datasource db {
@@ -11,65 +7,50 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// Authentication models (NextAuth.js)
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime? @map("email_verified")
+  image         String?
+  accounts      Account[]
+  sessions      Session[]
+  outfits       Outfit[]
+  calendar      OutfitCalendar[]
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+
+  @@map("users")
+}
+
 model Account {
-  id                String  @id @default(cuid())
-  userId            String
-  type              String
-  provider          String
-  providerAccountId String
-  refresh_token     String? @db.Text
-  access_token      String? @db.Text
-  expires_at        Int?
-  token_type        String?
-  scope             String?
-  id_token         String? @db.Text
-  session_state     String?
-  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id                 String  @id @default(cuid())
+  userId             String  @map("user_id")
+  type               String
+  provider           String
+  providerAccountId  String  @map("provider_account_id")
+  refresh_token      String? @db.Text
+  access_token       String? @db.Text
+  expires_at         Int?
+  token_type         String?
+  scope              String?
+  id_token           String? @db.Text
+  session_state      String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
+  @@map("accounts")
 }
 
 model Session {
   id           String   @id @default(cuid())
-  sessionToken String   @unique
-  userId       String
+  sessionToken String   @unique @map("session_token")
+  userId       String   @map("user_id")
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-}
 
-model User {
-  id              String    @id @default(cuid())
-  name            String?
-  email           String?   @unique
-  emailVerified   DateTime?
-  password        String?   @db.Text
-  image           String?
-  role            UserRole  @default(USER)
-  bio             String?   @db.Text
-  username        String?   @unique
-  website         String?
-  location        String?
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
-  accounts        Account[]
-  sessions        Session[]
-  wardrobeItems   WardrobeItem[]
-  outfits         Outfit[]
-  styleProfile    StyleProfile?
-  following       User[]     @relation("UserFollows", references: [id])
-  followers       User[]     @relation("UserFollows", references: [id])
-  savedItems      WardrobeItem[] @relation("SavedItems")
-  likedOutfits    Outfit[]    @relation("LikedOutfits")
-  notifications   Notification[]
-  conversations  ConversationParticipant[]
-  messages       Message[]
-  comments       Comment[]
-  
-  @@unique([email])
-  @@unique([username])
-  @@index([email])
-  @@index([username])
+  @@map("sessions")
 }
 
 model VerificationToken {
@@ -78,197 +59,48 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
-}
-
-// Application models
-enum UserRole {
-  USER
-  ADMIN
-  MODERATOR
-}
-
-enum ItemCategory {
-  TOPS
-  BOTTOMS
-  DRESSES
-  OUTERWEAR
-  SHOES
-  ACCESSORIES
-  UNDERWEAR
-  SWIMWEAR
-  ACTIVE_WEAR
-  SLEEPWEAR
-  FORMAL
-  COSTUME
-  OTHER
-}
-
-enum ItemCondition {
-  NEW
-  EXCELLENT
-  GOOD
-  FAIR
-  POOR
-}
-
-enum OutfitPrivacy {
-  PUBLIC
-  PRIVATE
-  FOLLOWERS_ONLY
-}
-
-model WardrobeItem {
-  id          String       @id @default(cuid())
-  name        String
-  description String?      @db.Text
-  brand       String?
-  category    ItemCategory
-  color       String?
-  size        String?
-  condition   ItemCondition
-  price       Float?
-  purchaseDate DateTime?
-  images      String[]     // Array of image URLs
-  isFavorite  Boolean      @default(false)
-  isArchived  Boolean      @default(false)
-  tags        String[]
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
-  userId      String
-  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
-  outfits     OutfitItem[]
-  savedBy     User[]       @relation("SavedItems")
-  
-  @@index([userId])
-  @@index([category])
+  @@map("verification_tokens")
 }
 
 model Outfit {
-  id          String       @id @default(cuid())
-  name        String
-  description String?      @db.Text
-  isPublic    Boolean      @default(true)
-  privacy     OutfitPrivacy @default(PUBLIC)
-  images      String[]     // Array of image URLs
-  tags        String[]
-  likes       Int         @default(0)
-  isFavorite  Boolean     @default(false)
-  isArchived  Boolean     @default(false)
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
-  userId      String
-  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id          String   @id @default(cuid())
+  name        String?
+  description String?
+  userId      String   @map("user_id")
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   items       OutfitItem[]
-  likedBy     User[]      @relation("LikedOutfits")
-  comments    Comment[]
-  
-  @@index([userId])
-  @@index([isPublic])
+  calendar    OutfitCalendar[]
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@map("outfits")
 }
 
 model OutfitItem {
-  id        String      @id @default(cuid())
-  outfitId  String
-  itemId    String
-  outfit    Outfit      @relation(fields: [outfitId], references: [id], onDelete: Cascade)
-  item      WardrobeItem @relation(fields: [itemId], references: [id], onDelete: Cascade)
-  
-  @@unique([outfitId, itemId])
+  id            String   @id @default(cuid())
+  clothingItemId String   @map("clothing_item_id")
+  outfitId      String   @map("outfit_id")
+  outfit        Outfit   @relation(fields: [outfitId], references: [id], onDelete: Cascade)
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  @@map("outfit_items")
 }
 
-model StyleProfile {
+model OutfitCalendar {
   id          String   @id @default(cuid())
-  userId      String   @unique
+  date        DateTime
+  notes       String?
+  isCompleted Boolean  @default(false)
+  outfitId    String   @map("outfit_id")
+  userId      String   @map("user_id")
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  style       String[] // Array of style preferences
-  colors      String[] // Favorite colors
-  sizes       String[] // Available sizes
-  preferences Json?    // Additional preferences
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-}
+  outfit      Outfit   @relation(fields: [outfitId], references: [id])
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
 
-model Notification {
-  id        String   @id @default(cuid())
-  type      String   // e.g., 'like', 'comment', 'follow', 'mention'
-  read      Boolean  @default(false)
-  createdAt DateTime @default(now())
-  userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  senderId  String?
-  sender    User?    @relation("NotificationSender", fields: [senderId], references: [id])
-  itemId    String?  // ID of the related item (outfit, comment, etc.)
-  itemType  String?  // Type of the related item
-  
-  @@index([userId, read])
-}
-
-model Conversation {
-  id           String                   @id @default(cuid())
-  createdAt    DateTime                 @default(now())
-  updatedAt    DateTime                 @updatedAt
-  participants ConversationParticipant[]
-  messages     Message[]
-  
-  @@index([updatedAt])
-}
-
-model ConversationParticipant {
-  id             String       @id @default(cuid())
-  userId         String
-  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
-  conversationId String
-  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
-  hasUnread      Boolean      @default(false)
-  lastReadAt     DateTime     @default(now())
-  
-  @@unique([userId, conversationId])
-}
-
-model Message {
-  id             String       @id @default(cuid())
-  content        String       @db.Text
-  imageUrl       String?
-  createdAt      DateTime     @default(now())
-  updatedAt      DateTime     @updatedAt
-  userId         String
-  user           User         @relation(fields: [userId], references: [id])
-  conversationId String
-  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
-  
-  @@index([conversationId, createdAt])
-}
-
-model Comment {
-  id        String   @id @default(cuid())
-  content   String   @db.Text
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  userId    String
-  user      User     @relation(fields: [userId], references: [id])
-  outfitId  String
-  outfit    Outfit   @relation(fields: [outfitId], references: [id], onDelete: Cascade)
-  parentId  String?
-  parent    Comment? @relation("CommentReplies", fields: [parentId], references: [id])
-  replies   Comment[] @relation("CommentReplies")
-  
-  @@index([outfitId, createdAt])
-  @@index([parentId])
-}
-
-// Indexes for full-text search
-model FullTextIndex {
-  id      Int    @id @default(autoincrement())
-  content String @db.Text
-  
-  @@index([content], type: Gin)
-  @@map("full_text_index")
-}
-
-// Enable pg_trgm extension for fuzzy search
-model EnableExtensions {
-  id Int @id @default(autoincrement())
-  
-  @@map("enable_extensions")
-  @@db.Raw("CREATE EXTENSION IF NOT EXISTS pg_trgm")
+  @@unique([userId, date])
+  @@index([userId])
+  @@index([outfitId])
+  @@map("outfit_calendar")
 }

@@ -8,10 +8,8 @@ import '@/styles/global.css';
 function App({ Component, pageProps }: AppProps) {
   const router = useRouter();
 
-  // Track page views
   React.useEffect(() => {
     const handleRouteChange = (url: string) => {
-      // You can add analytics tracking here
       console.log(`App is navigating to: ${url}`);
     };
 
@@ -30,10 +28,6 @@ function App({ Component, pageProps }: AppProps) {
         <link rel="manifest" href="/manifest.json" />
       </Head>
       
-      {/* Splash Screen */}
-      <SplashScreen />
-      
-      {/* Main App Content */}
       <div className="min-h-screen flex flex-col">
         <Component {...pageProps} />
       </div>

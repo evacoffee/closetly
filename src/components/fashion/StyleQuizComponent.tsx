@@ -72,7 +72,6 @@ export const StyleQuizComponent: React.FC<StyleQuizComponentProps> = ({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const fileDropRef = useRef<HTMLDivElement>(null);
 
-  // Filter styles based on search query
   const filteredStyles = fashionStyles.filter(style =>
     style.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     style.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -113,7 +112,6 @@ export const StyleQuizComponent: React.FC<StyleQuizComponentProps> = ({
 
   const processImageFile = (file: File) => {
     if (!file.type.startsWith('image/')) {
-      // Handle invalid file type
       return;
     }
     
@@ -188,109 +186,3 @@ export const StyleQuizComponent: React.FC<StyleQuizComponentProps> = ({
               type="file"
               ref={fileInputRef}
               onChange={handleFileChange}
-              accept="image/*"
-              className="hidden"
-              disabled={disabled}
-            />
-            
-            {bodyPhoto ? (
-              <div className="relative group">
-                <img 
-                  src={bodyPhoto} 
-                  alt="Body reference" 
-                  className="mx-auto max-h-48 rounded-md object-cover"
-                />
-                <button
-                  type="button"
-                  className="absolute top-2 right-2 bg-destructive text-destructive-foreground rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setBodyPhoto(null);
-                    if (fileInputRef.current) {
-                      fileInputRef.current.value = '';
-                    }
-                  }}
-                  disabled={disabled}
-                >
-                  <X className="h-4 w-4" />
-                </button>
-              </div>
-            ) : (
-              <div className="space-y-2">
-                <Upload className="h-10 w-10 mx-auto text-muted-foreground" />
-                <p className="text-sm text-muted-foreground">
-                  Drag and drop an image here, or click to select
-                </p>
-                <p className="text-xs text-muted-foreground">
-                  Upload a photo to get more personalized style recommendations
-                </p>
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-
-      <div className="space-y-4">
-        <div className="flex justify-between items-center">
-          <h3 className="text-lg font-medium">Select up to {maxSelections} styles</h3>
-          <span className="text-sm text-muted-foreground">
-            {selectedStyles.length} of {maxSelections} selected
-          </span>
-        </div>
-
-        {selectedStyles.length > 0 && (
-          <div className="mb-4">
-            <h4 className="text-sm font-medium mb-2">Selected Styles:</h4>
-            <div className="flex flex-wrap gap-2">
-              {selectedStyleDefs.map(style => (
-                <div 
-                  key={style.id}
-                  className="inline-flex items-center bg-muted rounded-full px-3 py-1 text-sm"
-                >
-                  {style.name}
-                  <button
-                    type="button"
-                    className="ml-2 text-muted-foreground hover:text-foreground"
-                    onClick={() => handleStyleSelect(style.id)}
-                    disabled={disabled}
-                  >
-                    <X className="h-3 w-3" />
-                  </button>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-          {filteredStyles.map((style) => (
-            <StyleCard
-              key={style.id}
-              style={style}
-              selected={selectedStyles.includes(style.id)}
-              onSelect={handleStyleSelect}
-              disabled={disabled}
-            />
-          ))}
-        </div>
-
-        {filteredStyles.length === 0 && (
-          <div className="text-center py-8 text-muted-foreground">
-            No styles match your search. Try different keywords.
-          </div>
-        )}
-      </div>
-
-      <div className="flex justify-end pt-4 border-t">
-        <Button 
-          onClick={handleComplete}
-          disabled={selectedStyles.length === 0 || !ageProfile || disabled}
-        >
-          Save Styles
-        </Button>
-      </div>
-    </div>
-  );
-};
-
-export default StyleQuizComponent;

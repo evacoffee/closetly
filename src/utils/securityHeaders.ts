@@ -43,7 +43,6 @@ export function applySecurityHeaders(handler: (req: NextRequest) => Promise<Next
     const response = await handler(req);
     const securityHeaders = securityHeadersMiddleware(req);
     
-    // Merge security headers with the response
     securityHeaders.headers.forEach((value, key) => {
       if (key.toLowerCase() !== 'content-length') {
         response.headers.set(key, value);

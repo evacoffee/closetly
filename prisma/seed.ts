@@ -6,7 +6,6 @@ const prisma = new PrismaClient();
 async function main() {
   console.log('🌱 Seeding database...');
 
-  // Create admin user
   const hashedAdminPassword = await bcrypt.hash('admin123', 12);
   const admin = await prisma.user.upsert({
     where: { email: 'admin@example.com' },
@@ -36,7 +35,6 @@ async function main() {
     include: { styleProfile: true }
   });
 
-  // Create regular user
   const hashedUserPassword = await bcrypt.hash('user1234', 12);
   const user = await prisma.user.upsert({
     where: { email: 'user@example.com' },
@@ -60,7 +58,6 @@ async function main() {
           }
         }
       },
-      // Follow admin user
       following: {
         connect: [{ id: admin.id }]
       }
@@ -71,7 +68,6 @@ async function main() {
     }
   });
 
-  // Add some wardrobe items for the user
   const wardrobeItems = await Promise.all([
     prisma.wardrobeItem.create({
       data: {
@@ -120,7 +116,6 @@ async function main() {
     })
   ]);
 
-  // Create an outfit using the wardrobe items
   const outfit = await prisma.outfit.create({
     data: {
       name: 'Casual Day Out',

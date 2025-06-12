@@ -8,10 +8,7 @@ export default function SearchBar() {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      // Here you can implement your search logic
       console.log('Searching for:', searchQuery);
-      // You can also navigate to a search results page:
-      // window.location.href = `/search?q=${encodeURIComponent(searchQuery)}`;
     }
   };
 

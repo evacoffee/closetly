@@ -1,6 +1,5 @@
 import { Post } from '@/types/index'; // Updated import path
 
-// Mock data for demonstration
 const mockPosts: Post[] = [
   {
     id: '1',
@@ -16,15 +15,9 @@ const mockPosts: Post[] = [
       picture: '/images/team.jpg',
     },
   },
-  // Add more mock posts as needed
 ];
 
-/**
- * Fetches blog posts from the API
- * In a real application, this would be a call to your backend API
- */
 export const getPosts = async (): Promise<Post[]> => {
-  // Simulate API call
   return new Promise((resolve) => {
     setTimeout(() => {
       resolve(mockPosts);
@@ -32,9 +25,6 @@ export const getPosts = async (): Promise<Post[]> => {
   });
 };
 
-/**
- * Fetches a single post by slug
- */
 export const getPostBySlug = async (slug: string): Promise<Post | null> => {
   const posts = await getPosts();
   return posts.find((post) => post.slug === slug) || null;

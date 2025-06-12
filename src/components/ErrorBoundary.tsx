@@ -20,7 +20,6 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
   };
 
   public static getDerivedStateFromError(error: Error): ErrorBoundaryState {
-    // Update state so the next render will show the fallback UI
     return { hasError: true, error };
   }
 
@@ -58,7 +57,6 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
   }
 }
 
-// Custom hook for error handling in components
 export function useErrorHandler() {
   const handleError = (error: unknown, context: Record<string, unknown> = {}) => {
     const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';

@@ -48,7 +48,6 @@ const OutfitSchema = new Schema<IOutfit>({
   timestamps: true
 });
 
-// Indexes for efficient querying
 OutfitSchema.index({ userId: 1, style: 1 });
 OutfitSchema.index({ userId: 1, season: 1 });
 OutfitSchema.index({ publicVisibility: 1, likes: -1 });

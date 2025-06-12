@@ -22,19 +22,14 @@ export class OutfitGenerator {
     location: string
   ): Promise<OutfitSuggestion[]> {
     try {
-      // 1. Get user's wardrobe
       const wardrobe = await this.getUserWardrobe(userId);
       
-      // 2. Get weather data
       const weather = await this.weatherService.getWeather(location);
       
-      // 3. Filter items by weather and occasion
       const suitableItems = this.filterItemsByConditions(wardrobe, weather, occasion);
       
-      // 4. Generate outfit combinations
       const outfitSuggestions = this.generateOutfitCombinations(suitableItems, weather, occasion);
       
-      // 5. Rank and return top suggestions
       return this.rankOutfits(outfitSuggestions, weather, occasion).slice(0, 5);
       
     } catch (error) {
@@ -44,7 +39,6 @@ export class OutfitGenerator {
   }
 
   private async getUserWardrobe(userId: string): Promise<WardrobeItem[]> {
-    // In a real implementation, this would fetch from your database
     const response = await fetch(`/api/wardrobe?userId=${userId}`);
     if (!response.ok) {
       throw new Error('Failed to fetch wardrobe');
@@ -58,10 +52,8 @@ export class OutfitGenerator {
     occasion: string
   ): WardrobeItem[] {
     return items.filter(item => {
-      // Filter by weather suitability
       const isWeatherSuitable = this.isItemSuitableForWeather(item, weather);
       
-      // Filter by occasion
       const isOccasionSuitable = this.isItemSuitableForOccasion(item, occasion);
       
       return isWeatherSuitable && isOccasionSuitable;
@@ -69,7 +61,6 @@ export class OutfitGenerator {
   }
 
   private isItemSuitableForWeather(item: WardrobeItem, weather: WeatherData): boolean {
-    // Simple weather suitability check
     if (weather.temperature < 10 && !item.weatherSuitability.includes('cold')) {
       return false;
     }
@@ -83,7 +74,6 @@ export class OutfitGenerator {
   }
 
   private isItemSuitableForOccasion(item: WardrobeItem, occasion: string): boolean {
-    // Simple occasion check
     const occasionMap: Record<string, string[]> = {
       casual: ['casual', 'business'],
       business: ['business', 'formal'],
@@ -99,7 +89,6 @@ export class OutfitGenerator {
     weather: WeatherData,
     occasion: string
   ): OutfitSuggestion[] {
-    // Group items by type
     const tops = items.filter(item => this.isTop(item));
     const bottoms = items.filter(item => this.isBottom(item));
     const outerwear = items.filter(item => this.isOuterwear(item));
@@ -107,10 +96,8 @@ export class OutfitGenerator {
     
     const combinations: OutfitSuggestion[] = [];
     
-    // Generate combinations
     for (const top of tops) {
       for (const bottom of bottoms) {
-        // Basic outfit
         const outfit: OutfitSuggestion = {
           top,
           bottom,
@@ -118,12 +105,10 @@ export class OutfitGenerator {
           reason: ''
         };
         
-        // Add outerwear if needed
         if (weather.temperature < 18 && outerwear.length > 0) {
           outfit.outerwear = outerwear[Math.floor(Math.random() * outerwear.length)];
         }
         
-        // Add shoes
         if (shoes.length > 0) {
           outfit.shoes = shoes[Math.floor(Math.random() * shoes.length)];
         }
@@ -143,7 +128,6 @@ export class OutfitGenerator {
     return outfits.map(outfit => {
       let rating = 5; // Base rating
       
-      // Rate based on weather
       if (weather.temperature < 10 && !outfit.outerwear) {
         rating -= 2;
       }
@@ -152,12 +136,10 @@ export class OutfitGenerator {
         rating -= 1;
       }
       
-      // Rate based on occasion
       if (occasion === 'formal' && outfit.top.formality !== 'formal') {
         rating -= 1;
       }
       
-      // Rate based on color coordination
       if (outfit.top.color === outfit.bottom.color) {
         rating += 0.5; // Monochrome can be good
       }
@@ -196,7 +178,6 @@ export class OutfitGenerator {
     return reasons.join('. ') + '.';
   }
 
-  // Helper methods to categorize items
   private isTop(item: WardrobeItem): boolean {
     return ['shirt', 'blouse', 't-shirt', 'sweater'].includes(item.type);
   }
@@ -214,5 +195,4 @@ export class OutfitGenerator {
   }
 }
 
-// Export a singleton instance
 export const outfitGenerator = OutfitGenerator.getInstance();

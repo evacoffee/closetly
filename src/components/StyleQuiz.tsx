@@ -7,7 +7,6 @@ import { AgeProfile } from '@/components/AgeProfileSelector';
 import dynamic from 'next/dynamic';
 import { ErrorBoundary } from 'react-error-boundary';
 
-// Lazy load the heavy component
 const StyleQuizComponent = dynamic(
   () => import('./StyleQuizComponent'),
   { 
@@ -16,7 +15,6 @@ const StyleQuizComponent = dynamic(
   }
 );
 
-// Error fallback component
 const ErrorFallback = ({ error, resetErrorBoundary }: { error: Error, resetErrorBoundary: () => void }) => (
   <div role="alert" className="alert alert-error">
     <div>
@@ -34,7 +32,6 @@ function StyleQuiz() {
   const [isLoading, setIsLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
 
-  // Safely get from localStorage with error handling
   const getFromLocalStorage = useCallback(<T,>(key: string, defaultValue: T): T => {
     try {
       if (typeof window === 'undefined') return defaultValue;
@@ -47,7 +44,6 @@ function StyleQuiz() {
     }
   }, []);
 
-  // Load profile data
   React.useEffect(() => {
     const loadProfile = async () => {
       try {
@@ -77,12 +73,10 @@ function StyleQuiz() {
         updatedAt: new Date().toISOString()
       };
 
-      // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000));
       
       localStorage.setItem('userProfile', JSON.stringify(profileData));
       
-      // Track completion
       if (window.gtag) {
         window.gtag('event', 'quiz_completed', {
           style_count: selectedStyles.length,
