@@ -186,3 +186,5 @@ export function ProductCard({ product, onViewDetails }: Props) {
         </div>
       </div>
     </article>
+  )
+}
