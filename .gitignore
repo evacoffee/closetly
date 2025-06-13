@@ -2,30 +2,38 @@
 /node_modules
 /.pnp
 .pnp.js
+.pnp.cjs
+.pnp.mjs
+.pnp.*.map
 
 # Testing
 /coverage
+/.nyc_output
 
 # Next.js
 /.next/
 /out/
+/out_*/
 
 # Production
 /build
-
-# Misc
-.DS_Store
-*.pem
+/dist
 
 # Debug
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
+*.log
 
 # Local env files
 .env*.local
 .env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env*.local
 
 # Vercel
 .vercel
@@ -33,6 +41,89 @@ yarn-error.log*
 # Typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Editor directories and files
+.idea
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.DS_Store
+
+# Cache
+.cache
+.turbo
+.next/cache
+
+# Build output
+.next/cache
+.next/server
+.next/static/chunks/pages
+.next/trace
+
+# PWA
+/public/sw.js
+/public/workbox-*.js
+/public/worker-*.js
+/public/fallback-*.js
+
+# Misc
+*.pem
+*.p12
+*.key
+*.crt
+*.cer
+*.p7b
+*.p7c
+*.p7s
+*.p12
+*.pfx
+*.crt
+*.cert
+*.der
+*.csr
+*.crl
+*.sst
+*.stl
+*.sst
+*.stl
+*.p7b
+*.p7c
+*.p7s
+*.p12
+*.pfx
+*.crt
+*.cert
+*.der
+*.csr
+*.crl
+*.sst
+*.stl
+*.sst
+*.stl
+*.p7b
+*.p7c
+*.p7s
+*.p12
+*.pfx
+*.crt
+*.cert
+*.der
+*.csr
+*.crl
+*.sst
+*.stl
+*.sst
+*.stl
+
+# Local development
+*.local
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
 
 # IDE
 .idea
@@ -42,3 +133,12 @@ next-env.d.ts
 *.njsproj
 *.sln
 *.sw?
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db

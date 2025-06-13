@@ -1,13 +1,12 @@
-/** @type {import('next').NextConfig} */
-const withBundleAnalyzer = require('@next/bundle-analyzer')({
-  enabled: process.env.ANALYZE === 'true',
-});
-
 const withPWA = require('next-pwa')({
   dest: 'public',
   disable: process.env.NODE_ENV === 'development',
   register: true,
   skipWaiting: true,
+});
+
+const withBundleAnalyzer = require('@next/bundle-analyzer')({
+  enabled: process.env.ANALYZE === 'true',
 });
 
 const securityHeaders = [
@@ -43,17 +42,19 @@ const securityHeaders = [
 
 const nextConfig = {
   reactStrictMode: true,
-  productionBrowserSourceMaps: false,
   swcMinify: true,
-  compress: true,
   images: {
-    domains: ['res.cloudinary.com', 'lh3.googleusercontent.com'],
+    domains: ['example.com'], // Add your image domains here
     formats: ['image/avif', 'image/webp'],
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
+  },
+  compiler: {
+    styledComponents: true,
   },
   async headers() {
     return [
       {
-        source: '/(.*)',
+        source: '/:path*',
         headers: securityHeaders,
       },
     ];
@@ -61,8 +62,8 @@ const nextConfig = {
   async rewrites() {
     return [
       {
-        source: '/sitemap.xml',
-        destination: '/api/sitemap',
+        source: '/api/:path*',
+        destination: `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api'}/:path*`,
       },
     ];
   },
@@ -77,4 +78,4 @@ const nextConfig = {
   },
 };
 
-module.exports = withPWA(withBundleAnalyzer(nextConfig));
+module.exports = withBundleAnalyzer(withPWA(nextConfig));
