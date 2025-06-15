@@ -2,6 +2,20 @@
 
 import Link from 'next/link';
 import * as React from 'react';
+import { EnhancedOutfitRecommender } from '@/components/outfit/EnhancedOutfitRecommender';
+import { Suspense } from 'react';
+import { Skeleton } from '@/components/ui/skeleton';
+
+export default function Home() {
+  return (
+    <main className="min-h-screen">
+      <Suspense fallback={<Skeleton className="h-screen w-full" />}>
+        <EnhancedOutfitRecommender />
+      </Suspense>
+    </main>
+  );
+}
+
 const { useState } = React;
 
 const WardrobeIcon = () => (
