@@ -1,10 +1,15 @@
 import './globals.css'
 import type { Metadata } from 'next'
-import { ThemeProvider } from '@/contexts/ThemeContext'
-import { ThemePicker } from '@/components/ThemePicker'
-import { MobileNavigation } from '@/components/MobileNavigation'
-import { AppIcon } from '@/components/AppIcon'
-import SearchBar from '@/components/SearchBar'
+import * as React from 'react';
+import { ThemeProvider } from '@/contexts/ThemeContext';
+import { ThemePicker } from '@/components/ThemePicker';
+import { MobileNavigation } from '@/components/MobileNavigation';
+import { AppIcon } from '@/components/AppIcon';
+import SearchBar from '@/components/SearchBar';
+import { Button } from '@/components/ui/button';
+import { Settings } from 'lucide-react';
+import { PreferencesModal } from '@/components/outfit/PreferencesModal';
+import { DEFAULT_PREFERENCES, savePreferences } from '@/lib/preferences';
 
 export const metadata: Metadata = {
   title: 'Closetly - Digital Wardrobe',
@@ -28,6 +33,17 @@ export default function RootLayout({
 }: {
   children: React.ReactNode
 }) {
+  const [isPreferencesOpen, setIsPreferencesOpen] = React.useState(false);
+  const [userPreferences, setUserPreferences] = React.useState(DEFAULT_PREFERENCES);
+  
+  // Load preferences on mount
+  React.useEffect(() => {
+    const savedPrefs = localStorage.getItem('userPreferences');
+    if (savedPrefs) {
+      setUserPreferences(JSON.parse(savedPrefs));
+    }
+  }, []);
+
   return (
     <html lang="en" className="antialiased">
       <body className="bg-background text-text min-h-screen overscroll-none font-sans">
@@ -43,6 +59,15 @@ export default function RootLayout({
                   <SearchBar />
                 </div>
                 <div className="flex items-center gap-4 flex-shrink-0">
+                  <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    onClick={() => setIsPreferencesOpen(true)}
+                    className="text-foreground hover:bg-accent/50"
+                  >
+                    <Settings className="h-5 w-5" />
+                    <span className="sr-only">Preferences</span>
+                  </Button>
                   <ThemePicker />
                 </div>
               </div>
@@ -54,6 +79,15 @@ export default function RootLayout({
             </div>
           </main>
           <MobileNavigation />
+          <PreferencesModal
+            isOpen={isPreferencesOpen}
+            onOpenChange={setIsPreferencesOpen}
+            initialPreferences={userPreferences}
+            onSave={(newPreferences) => {
+              setUserPreferences(newPreferences);
+              savePreferences(newPreferences);
+            }}
+          />
         </ThemeProvider>
       </body>
     </html>

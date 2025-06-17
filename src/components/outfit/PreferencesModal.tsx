@@ -6,22 +6,15 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Settings } from 'lucide-react';
+import type { UserPreferences } from '@/lib/preferences';
 
-type PreferenceKey = 'weatherAware' | 'seasonalSuggestions' | 'occasionBased' | 'colorMatching' | 'favoritesFirst';
-
-interface Preferences {
-  weatherAware: boolean;
-  seasonalSuggestions: boolean;
-  occasionBased: boolean;
-  colorMatching: boolean;
-  favoritesFirst: boolean;
-}
+type PreferenceKey = keyof UserPreferences;
 
 interface PreferencesModalProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
-  initialPreferences?: Partial<Preferences>;
-  onSave?: (preferences: Preferences) => void;
+  initialPreferences?: Partial<UserPreferences>;
+  onSave?: (preferences: UserPreferences) => void;
 }
 
 export function PreferencesModal({
@@ -30,20 +23,23 @@ export function PreferencesModal({
   initialPreferences = {},
   onSave,
 }: PreferencesModalProps) {
-  const [preferences, setPreferences] = React.useState<Preferences>({
+  const [preferences, setPreferences] = React.useState<UserPreferences>(() => ({
     weatherAware: true,
     seasonalSuggestions: true,
     occasionBased: false,
     colorMatching: true,
     favoritesFirst: false,
     ...initialPreferences,
-  });
+  }));
 
   const togglePreference = (key: PreferenceKey) => {
-    setPreferences(prev => ({
-      ...prev,
-      [key]: !prev[key],
-    }));
+    setPreferences(prev => {
+      const newPrefs = {
+        ...prev,
+        [key]: !prev[key]
+      };
+      return newPrefs as UserPreferences;
+    });
   };
 
   const handleSave = () => {
