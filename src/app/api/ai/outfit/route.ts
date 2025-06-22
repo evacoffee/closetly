@@ -1,18 +1,15 @@
 import { NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
-import { prisma } from '@/lib/prisma' // db client
+import { prisma } from '@/lib/prisma'
 
-// Fetch all outfits for the logged in user
 export async function GET() {
-  // Make sure user is logged in
   const session = await getServerSession(authOptions)
   if (!session?.user?.id) {
     return new NextResponse('Please log in first', { status: 401 })
   }
 
   try {
-    // Grab outfits from db, newest ones first
     const outfits = await prisma.outfit.findMany({
       where: { userId: session.user.id },
       include: { 
@@ -25,7 +22,6 @@ export async function GET() {
       }
     })
     
-    // Send back the outfits
     return NextResponse.json(outfits)
   } catch (err) {
     console.error('Problem getting outfits:', err)
@@ -36,5 +32,4 @@ export async function GET() {
   }
 }
 
-// Make sure we don't cache this route
 export const dynamic = 'force-dynamic'
