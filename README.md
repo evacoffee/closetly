@@ -1,4 +1,4 @@
-# 👗 Closetly - Your Digital Wardrobe
+# Closetly - Your Digital Wardrobe
 
 [![Next.js](https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
@@ -9,7 +9,6 @@
 Closetly is a modern digital wardrobe application that helps you catalog your clothing collection, generate stylish outfit combinations, and connect with fashion enthusiasts. Manage your wardrobe, get AI-powered outfit suggestions, and discover new styles all in one place.
 
 ![Closetly Screenshot](/public/images/closetly-preview.png)
-*Screenshot: Your digital wardrobe at a glance*
 
 ## 🚀 Features
 
@@ -127,7 +126,7 @@ Closetly takes security seriously with these built-in protections:
 
 ## 🤝 Contributing
 
-Contributions are welcome! Please read our [contributing guidelines](CONTRIBUTING.md) to get started.
+Contributions are welcome! Please read our [contributing guidelines](CONTRIBUTING.md).
 
 ## 📝 License
 
