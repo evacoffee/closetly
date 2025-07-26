@@ -10,7 +10,7 @@ Closetly is a modern digital wardrobe application that helps you catalog your cl
 
 ![Closetly Screenshot](/public/images/closetly-preview.png)
 
-## 🚀 Features
+##  Features
 
 - **Style Quiz** - Discover your personal style
 - **Wardrobe Management** - Catalog your clothing items with ease
@@ -18,7 +18,7 @@ Closetly is a modern digital wardrobe application that helps you catalog your cl
 - **Social Sharing** - Share your styles and get inspired
 - **Responsive Design** - Works seamlessly on all devices
 
-## ✨ Features
+##  Features
 
 - **Style Quiz** - Discover your personal style
 - **Wardrobe Management** - Catalog your clothing items
@@ -30,7 +30,7 @@ Closetly is a modern digital wardrobe application that helps you catalog your cl
 - **Rate Limiting** - Protect against abuse
 - **Security Headers** - CSP, XSS Protection, and more
 
-## 🛠 Development Setup
+##  Development Setup
 
 ### Prerequisites
 
@@ -88,7 +88,7 @@ docker build -t closetly .
 docker run -p 3000:3000 closetly
 ```
 
-## 🏗 How It's Made
+##  How It's Made
 
 Closetly is built with a modern tech stack to ensure performance, scalability, and developer experience:
 
@@ -106,7 +106,7 @@ The application follows modern web development best practices including:
 - Secure authentication and authorization
 - Responsive design principles
 
-## 🔒 Security
+##  Security
 
 Closetly takes security seriously with these built-in protections:
 - **Content Security Policy (CSP)** - Protects against XSS attacks
@@ -115,7 +115,7 @@ Closetly takes security seriously with these built-in protections:
 - **CSRF Protection** - Built-in request forgery protection
 - **Password Hashing** - Secure credential storage
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 - **Frontend**: [Next.js](https://nextjs.org/), [TypeScript](https://www.typescriptlang.org/), [Tailwind CSS](https://tailwindcss.com/)
 - **Backend**: [Next.js API Routes](https://nextjs.org/docs/api-routes/introduction)
@@ -124,10 +124,10 @@ Closetly takes security seriously with these built-in protections:
 - **Deployment**: [Vercel](https://vercel.com/)
 - **Payments**: [Stripe](https://stripe.com/) (coming soon)
 
-## 🤝 Contributing
+##  Contributing
 
 Contributions are welcome! Please read our [contributing guidelines](CONTRIBUTING.md).
 
-## 📝 License
+##  License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
